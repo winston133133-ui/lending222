@@ -148,7 +148,7 @@ export default function Landing() {
   const [consent, setConsent] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedCrossProducts, setSelectedCrossProducts] = useState<{ productId: string; quantity: number }[]>([]);
-  const [formData, setFormData] = useState({ name: '', phone: '', date: '', time: '', address: '', characterId: '', serviceId: '', songs: '', comment: '' });
+  const [formData, setFormData] = useState({ name: '', phone: '+7 ', date: '', time: '', address: '', characterId: '', serviceId: '', songs: '', comment: '' });
 
   const selectedCharacter = characters.find((c) => c.id === formData.characterId);
   const selectedService = selectedCharacter?.services.find((s) => s.id === formData.serviceId);
@@ -177,6 +177,30 @@ export default function Landing() {
   };
 
   const availableTimeSlots = formData.date && selectedService ? getAvailableTimeSlots(formData.date, selectedService.duration) : [];
+
+  const formatPhone = (value: string) => {
+    // Убираем все кроме цифр
+    const digits = value.replace(/\D/g, '');
+    // Если начинается с 8, заменяем на 7
+    const normalizedDigits = digits.startsWith('8') ? '7' + digits.slice(1) : digits;
+    // Если не начинается с 7, добавляем 7
+    const finalDigits = normalizedDigits.startsWith('7') ? normalizedDigits : '7' + normalizedDigits;
+    
+    // Форматируем: +7 (XXX) XXX-XX-XX
+    let formatted = '+7 ';
+    if (finalDigits.length > 1) formatted += '(' + finalDigits.slice(1, 4);
+    if (finalDigits.length >= 4) formatted += ') ';
+    if (finalDigits.length >= 7) formatted += finalDigits.slice(4, 7);
+    if (finalDigits.length >= 9) formatted += '-' + finalDigits.slice(7, 9);
+    if (finalDigits.length >= 11) formatted += '-' + finalDigits.slice(9, 11);
+    
+    return formatted;
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhone(e.target.value);
+    setFormData(p => ({ ...p, phone: formatted }));
+  };
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
@@ -256,6 +280,11 @@ export default function Landing() {
       </header>
 
       <section className="relative overflow-hidden bg-gradient-to-br from-purple-600 via-purple-700 to-pink-600 text-white min-h-[650px]">
+        {settings.heroBackgroundImage && (
+          <div className="absolute inset-0">
+            <img src={settings.heroBackgroundImage} alt="" className="w-full h-full object-cover opacity-20" />
+          </div>
+        )}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-10 left-[10%] text-6xl opacity-30 animate-bounce" style={{ animationDuration: '3.5s' }}>🎭</div>
           <div className="absolute top-1/4 right-[15%] text-5xl opacity-25 animate-pulse" style={{ animationDuration: '2.5s', animationDelay: '0.5s' }}>🎪</div>
@@ -277,6 +306,38 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      {/* Stories Section */}
+      {(settings.stories || []).filter(s => s.isActive).length > 0 && (
+        <section id="stories" className="py-20 bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 scroll-mt-20">
+          <div className="max-w-7xl mx-auto px-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-yellow-600 via-orange-600 to-red-600 bg-clip-text text-transparent">📸 Истории</h2>
+            <p className="text-center text-gray-600 mb-12 text-lg">Яркие моменты наших праздников</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {(settings.stories || []).filter(s => s.isActive).map((story) => (
+                <div key={story.id} className="group relative aspect-square rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all cursor-pointer" onClick={() => window.open(story.media, '_blank')}>
+                  {story.type === 'video' ? (
+                    <video src={story.media} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" muted />
+                  ) : (
+                    <img src={story.media} alt={story.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                    <div>
+                      <p className="text-white font-bold text-sm">{story.title}</p>
+                      {story.description && <p className="text-white/80 text-xs mt-1">{story.description}</p>}
+                    </div>
+                  </div>
+                  {story.type === 'video' && (
+                    <div className="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-full">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section id="characters" className="py-20 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4">
@@ -338,6 +399,23 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Subscription Section */}
+      {settings.subscriptionEnabled && (
+        <section className="py-20 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 text-white">
+          <div className="max-w-4xl mx-auto px-4 text-center">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4">{settings.subscriptionTitle}</h2>
+            <p className="text-lg text-white/90 mb-8">{settings.subscriptionDescription}</p>
+            <form onSubmit={(e) => { e.preventDefault(); alert('Спасибо за подписку!'); }} className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto">
+              <input type="email" required placeholder="Ваш email" className="flex-1 px-6 py-4 rounded-full text-gray-800 focus:outline-none focus:ring-4 focus:ring-white/50" />
+              <button type="submit" className="bg-white text-purple-600 px-8 py-4 rounded-full font-bold hover:bg-purple-50 transition shadow-xl">
+                Подписаться
+              </button>
+            </form>
+            <p className="text-sm text-white/70 mt-4">Мы не рассылаем спам. Только интересные новости и акции!</p>
+          </div>
+        </section>
+      )}
+
       <section id="reviews" className="py-20 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12">Отзывы клиентов</h2>
@@ -374,11 +452,17 @@ export default function Landing() {
           <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12">Контакты</h2>
           <div className="grid md:grid-cols-2 gap-12">
             <div className="space-y-6">
-              <div className="flex items-center gap-4"><Phone className="text-purple-400" size={24} /><div><p className="text-sm text-gray-400">Телефон</p><a href={`tel:${settings.phone}`} className="text-lg hover:text-purple-300">{settings.phone}</a></div></div>
-              <div className="flex items-center gap-4"><MessageCircle className="text-green-400" size={24} /><div><p className="text-sm text-gray-400">WhatsApp</p><p className="text-lg">{settings.whatsapp}</p></div></div>
-              <div className="flex items-center gap-4"><Send className="text-blue-400" size={24} /><div><p className="text-sm text-gray-400">Telegram</p><p className="text-lg">{settings.telegram}</p></div></div>
-              <div className="flex items-center gap-4"><MessageSquare className="text-orange-400" size={24} /><div><p className="text-sm text-gray-400">Макс</p><p className="text-lg">{settings.maxMessenger}</p></div></div>
-              <div className="flex items-center gap-4"><MapPin className="text-red-400" size={24} /><div><p className="text-sm text-gray-400">Адрес</p><p className="text-lg">{settings.address}</p></div></div>
+              {(settings.contactLinks || []).filter(c => c.isActive).map((contact) => (
+                <div key={contact.id} className="flex items-center gap-4">
+                  <span className="text-3xl">{contact.icon}</span>
+                  <div>
+                    <p className="text-sm text-gray-400">{contact.label}</p>
+                    <a href={contact.link} target={contact.link.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className="text-lg hover:text-purple-300 transition">
+                      {contact.value}
+                    </a>
+                  </div>
+                </div>
+              ))}
             </div>
             <div className="space-y-6">
               <div className="bg-gray-800 rounded-2xl p-6">
@@ -469,7 +553,7 @@ export default function Landing() {
                   <div className="space-y-4">
                     <h4 className="font-semibold text-lg">Ваши контакты</h4>
                     <div><label className="block text-sm font-medium mb-1">Ваше имя *</label><input required type="text" value={formData.name} onChange={(e) => setFormData(p => ({ ...p, name: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-purple-500" placeholder="Как к вам обращаться?" /></div>
-                    <div><label className="block text-sm font-medium mb-1">Телефон *</label><input required type="tel" value={formData.phone} onChange={(e) => setFormData(p => ({ ...p, phone: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-purple-500" placeholder="+7 (___) ___-__-__" /></div>
+                    <div><label className="block text-sm font-medium mb-1">Телефон *</label><input required type="tel" value={formData.phone} onChange={handlePhoneChange} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-purple-500" placeholder="+7 (___) ___-__-__" maxLength={18} /></div>
                     <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                       <h5 className="font-semibold text-sm mb-2">Ваш заказ:</h5>
                       <div className="space-y-1 text-sm">

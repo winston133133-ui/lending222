@@ -128,6 +128,34 @@ export interface PaymentMethod {
   isActive: boolean;
 }
 
+export interface ContactLink {
+  id: string;
+  type: 'phone' | 'whatsapp' | 'telegram' | 'max' | 'email' | 'address';
+  icon: string;
+  label: string;
+  value: string;
+  link: string;
+  isActive: boolean;
+}
+
+export interface Story {
+  id: string;
+  type: 'photo' | 'video';
+  media: string;
+  title: string;
+  description?: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface WorkSchedule {
+  id: string;
+  day: string;
+  startTime: string;
+  endTime: string;
+  isActive: boolean;
+}
+
 export interface SiteSettings {
   phone: string;
   whatsapp: string;
@@ -144,6 +172,7 @@ export interface SiteSettings {
   heroTitle: string;
   heroSubtitle: string;
   heroImage?: string;
+  heroBackgroundImage?: string;
   logo?: string;
   icon?: string;
   siteSeoTitle: string;
@@ -154,6 +183,12 @@ export interface SiteSettings {
   notificationEmail?: string;
   enableTelegramNotifications?: boolean;
   enableEmailNotifications?: boolean;
+  contactLinks: ContactLink[];
+  stories: Story[];
+  workSchedule: WorkSchedule[];
+  subscriptionEnabled: boolean;
+  subscriptionTitle: string;
+  subscriptionDescription: string;
 }
 
 export const STATUS_LABELS: Record<OrderStatus, string> = {

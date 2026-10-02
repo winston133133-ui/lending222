@@ -1,10 +1,10 @@
 import { useState, useRef } from 'react';
 import { useStore } from '../store/useStore';
 import { useNavigate } from 'react-router-dom';
-import type { Character, CharacterService, WorkConditionSection, HowToOrderStep, PaymentMethod } from '../types';
+import type { Character, CharacterService, WorkConditionSection, HowToOrderStep, PaymentMethod, ContactLink, Story, WorkSchedule } from '../types';
 import { Save, Plus, Trash2, Edit2, X, Phone, MessageCircle, Send, MapPin, FileText, Users, Shield, Sparkles, Upload, Globe, Star, Truck, Image as ImageIcon, MessageSquare, Clock, Bell, Mail } from 'lucide-react';
 
-type Tab = 'characters' | 'contacts' | 'texts' | 'conditions' | 'howtoorder' | 'payment' | 'gallery' | 'crossproducts' | 'notifications' | 'seo' | 'reviews' | 'users';
+type Tab = 'characters' | 'contacts' | 'texts' | 'conditions' | 'howtoorder' | 'payment' | 'gallery' | 'crossproducts' | 'notifications' | 'seo' | 'reviews' | 'users' | 'contactlinks' | 'stories' | 'schedule' | 'subscription';
 
 export default function Settings() {
   const { currentUser } = useStore();
@@ -24,6 +24,10 @@ export default function Settings() {
     { id: 'payment' as Tab, label: '💳 Оплата', icon: FileText },
     { id: 'gallery' as Tab, label: 'Галерея', icon: ImageIcon },
     { id: 'crossproducts' as Tab, label: 'Кросс-товары', icon: Sparkles },
+    { id: 'contactlinks' as Tab, label: '🔗 Ссылки', icon: Send },
+    { id: 'stories' as Tab, label: '📸 Истории', icon: ImageIcon },
+    { id: 'schedule' as Tab, label: '🕐 Режим работы', icon: Clock },
+    { id: 'subscription' as Tab, label: '📧 Подписка', icon: Mail },
     { id: 'notifications' as Tab, label: 'Уведомления', icon: Bell },
     { id: 'seo' as Tab, label: 'SEO', icon: Globe },
     { id: 'reviews' as Tab, label: 'Отзывы', icon: Star },
@@ -48,6 +52,10 @@ export default function Settings() {
       {activeTab === 'payment' && <PaymentMethodsTab />}
       {activeTab === 'gallery' && <GalleryTab />}
       {activeTab === 'crossproducts' && <CrossProductsTab />}
+      {activeTab === 'contactlinks' && <ContactLinksTab />}
+      {activeTab === 'stories' && <StoriesTab />}
+      {activeTab === 'schedule' && <ScheduleTab />}
+      {activeTab === 'subscription' && <SubscriptionTab />}
       {activeTab === 'notifications' && <NotificationsTab />}
       {activeTab === 'seo' && <SeoTab />}
       {activeTab === 'reviews' && <ReviewsTab />}
@@ -159,6 +167,189 @@ function CharactersTab() {
   );
 }
 
+function ContactLinksTab() {
+  const { contactLinks = [], addContactLink, updateContactLink, deleteContactLink } = useStore();
+  const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [form, setForm] = useState<{ type: 'phone' | 'whatsapp' | 'telegram' | 'max' | 'email' | 'address', icon: string, label: string, value: string, link: string, isActive: boolean }>({ type: 'phone', icon: '📞', label: '', value: '', link: '', isActive: true });
+
+  const handleSave = () => {
+    if (editingId) updateContactLink(editingId, form);
+    else addContactLink({ id: Date.now().toString(), ...form });
+    setForm({ type: 'phone', icon: '📞', label: '', value: '', link: '', isActive: true });
+    setShowForm(false); setEditingId(null);
+  };
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div><h2 className="text-lg font-bold">Контактные ссылки</h2><p className="text-sm text-gray-500 mt-1">Управление контактами на лендинге</p></div>
+        <button onClick={() => { setForm({ type: 'phone', icon: '📞', label: '', value: '', link: '', isActive: true }); setShowForm(true); setEditingId(null); }} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center gap-1 text-sm"><Plus size={16} />Добавить</button>
+      </div>
+      {showForm && (
+        <div className="mb-6 p-4 bg-purple-50 rounded-lg border border-purple-100 space-y-3">
+          <h3 className="font-medium">{editingId ? 'Редактирование' : 'Новая ссылка'}</h3>
+          <div className="grid md:grid-cols-2 gap-3">
+            <div><label className="block text-sm font-medium mb-1">Тип</label><select value={form.type} onChange={(e) => setForm(p => ({ ...p, type: e.target.value as any }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"><option value="phone">📞 Телефон</option><option value="whatsapp">💬 WhatsApp</option><option value="telegram">✈️ Telegram</option><option value="max">💭 Макс</option><option value="email">📧 Email</option><option value="address">📍 Адрес</option></select></div>
+            <div><label className="block text-sm font-medium mb-1">Иконка (эмодзи)</label><input type="text" value={form.icon} onChange={(e) => setForm(p => ({ ...p, icon: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="📞" /></div>
+            <div><label className="block text-sm font-medium mb-1">Название</label><input type="text" value={form.label} onChange={(e) => setForm(p => ({ ...p, label: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Телефон" /></div>
+            <div><label className="block text-sm font-medium mb-1">Значение</label><input type="text" value={form.value} onChange={(e) => setForm(p => ({ ...p, value: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="+7 (999) 123-45-67" /></div>
+            <div className="md:col-span-2"><label className="block text-sm font-medium mb-1">Ссылка</label><input type="text" value={form.link} onChange={(e) => setForm(p => ({ ...p, link: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="tel:+79991234567 или https://..." /></div>
+          </div>
+          <div className="flex items-center gap-2"><input type="checkbox" checked={form.isActive} onChange={(e) => setForm(p => ({ ...p, isActive: e.target.checked }))} className="w-4 h-4 text-purple-600 rounded" /><label className="text-sm font-medium">Активна</label></div>
+          <div className="flex gap-2"><button onClick={handleSave} disabled={!form.label || !form.value} className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700 disabled:opacity-50 flex items-center gap-1"><Save size={14} />{editingId ? 'Обновить' : 'Создать'}</button><button onClick={() => { setShowForm(false); setEditingId(null); }} className="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">Отмена</button></div>
+        </div>
+      )}
+      <div className="space-y-3">
+        {(contactLinks || []).map((link) => (
+          <div key={link.id} className={`flex items-center justify-between p-4 border rounded-lg ${link.isActive ? 'border-gray-200' : 'border-gray-100 opacity-60'}`}>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">{link.icon}</span>
+              <div><p className="font-medium">{link.label}</p><p className="text-sm text-gray-500">{link.value}</p><p className="text-xs text-gray-400 mt-1">{link.link}</p></div>
+            </div>
+            <div className="flex items-center gap-1">
+              <button onClick={() => { setForm({ type: link.type, icon: link.icon, label: link.label, value: link.value, link: link.link, isActive: link.isActive }); setEditingId(link.id); setShowForm(true); }} className="p-2 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg"><Edit2 size={16} /></button>
+              <button onClick={() => { if (confirm('Удалить ссылку?')) deleteContactLink(link.id); }} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 size={16} /></button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StoriesTab() {
+  const { stories = [], addStory, updateStory, deleteStory } = useStore();
+  const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [form, setForm] = useState({ type: 'photo' as 'photo' | 'video', media: '', title: '', description: '', isActive: true });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleSave = () => {
+    if (editingId) updateStory(editingId, form);
+    else addStory({ id: Date.now().toString(), ...form, createdAt: new Date().toISOString().split('T')[0] });
+    setForm({ type: 'photo', media: '', title: '', description: '', isActive: true });
+    setShowForm(false); setEditingId(null);
+  };
+
+  const handleMediaUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => { setForm(p => ({ ...p, media: ev.target?.result as string })); };
+    reader.readAsDataURL(file);
+  };
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div><h2 className="text-lg font-bold">Истории</h2><p className="text-sm text-gray-500 mt-1">Фото и видео с праздников</p></div>
+        <button onClick={() => { setForm({ type: 'photo', media: '', title: '', description: '', isActive: true }); setShowForm(true); setEditingId(null); }} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center gap-1 text-sm"><Plus size={16} />Добавить</button>
+      </div>
+      {showForm && (
+        <div className="mb-6 p-4 bg-purple-50 rounded-lg border border-purple-100 space-y-3">
+          <h3 className="font-medium">{editingId ? 'Редактирование' : 'Новая история'}</h3>
+          <div className="grid md:grid-cols-2 gap-3">
+            <div><label className="block text-sm font-medium mb-1">Тип</label><select value={form.type} onChange={(e) => setForm(p => ({ ...p, type: e.target.value as any }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"><option value="photo">📷 Фото</option><option value="video">🎥 Видео</option></select></div>
+            <div><label className="block text-sm font-medium mb-1">Название *</label><input type="text" value={form.title} onChange={(e) => setForm(p => ({ ...p, title: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="День рождения Миши" /></div>
+          </div>
+          <div><label className="block text-sm font-medium mb-1">Описание</label><textarea value={form.description} onChange={(e) => setForm(p => ({ ...p, description: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" rows={2} placeholder="Незабываемый праздник!" /></div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Медиа *</label>
+            <input ref={fileInputRef} type="file" accept={form.type === 'video' ? 'video/*' : 'image/*'} onChange={handleMediaUpload} className="hidden" />
+            <div className="flex items-center gap-3">
+              {form.media ? (form.type === 'video' ? <video src={form.media} className="w-32 h-32 object-cover rounded-lg" controls /> : <img src={form.media} alt="" className="w-32 h-32 object-cover rounded-lg" />) : <div className="w-32 h-32 border-2 border-dashed rounded-lg flex items-center justify-center text-gray-400 text-xs">Нет медиа</div>}
+              <div className="flex flex-col gap-2">
+                <button onClick={() => fileInputRef.current?.click()} className="bg-white border border-gray-300 px-3 py-2 rounded-lg text-sm hover:bg-gray-50 flex items-center gap-1"><Upload size={14} />Загрузить</button>
+                {form.media && <button onClick={() => setForm(p => ({ ...p, media: '' }))} className="text-red-500 text-xs">Удалить</button>}
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2"><input type="checkbox" checked={form.isActive} onChange={(e) => setForm(p => ({ ...p, isActive: e.target.checked }))} className="w-4 h-4 text-purple-600 rounded" /><label className="text-sm font-medium">Опубликовано</label></div>
+          <div className="flex gap-2"><button onClick={handleSave} disabled={!form.title || !form.media} className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700 disabled:opacity-50 flex items-center gap-1"><Save size={14} />{editingId ? 'Обновить' : 'Создать'}</button><button onClick={() => { setShowForm(false); setEditingId(null); }} className="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">Отмена</button></div>
+        </div>
+      )}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {(stories || []).map((story) => (
+          <div key={story.id} className={`relative group rounded-xl overflow-hidden shadow-md ${!story.isActive ? 'opacity-50' : ''}`}>
+            {story.type === 'video' ? <video src={story.media} className="w-full h-48 object-cover" /> : <img src={story.media} alt={story.title} className="w-full h-48 object-cover" />}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
+              <p className="text-white text-sm font-medium mb-1">{story.title}</p>
+              <div className="flex gap-2">
+                <button onClick={() => { setForm({ type: story.type, media: story.media, title: story.title, description: story.description || '', isActive: story.isActive }); setEditingId(story.id); setShowForm(true); }} className="flex-1 bg-white/20 hover:bg-white/30 text-white p-1.5 rounded-lg flex items-center justify-center"><Edit2 size={14} /></button>
+                <button onClick={() => { if (confirm('Удалить историю?')) deleteStory(story.id); }} className="flex-1 bg-red-500/80 hover:bg-red-500 text-white p-1.5 rounded-lg flex items-center justify-center"><Trash2 size={14} /></button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      {(stories || []).length === 0 && <div className="text-center py-12 text-gray-400"><ImageIcon size={48} className="mx-auto mb-3 opacity-50" /><p>Историй пока нет</p></div>}
+    </div>
+  );
+}
+
+function ScheduleTab() {
+  const { workSchedule = [], updateWorkSchedule } = useStore();
+  const [saved, setSaved] = useState(false);
+
+  const handleSave = () => {
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <h2 className="text-lg font-bold mb-2">Режим работы</h2>
+      <p className="text-sm text-gray-500 mb-6">Настройте рабочие часы. Эти ограничения будут применяться к форме заявки.</p>
+      <div className="space-y-3 max-w-2xl">
+        {workSchedule.map((schedule) => (
+          <div key={schedule.id} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg">
+            <div className="flex items-center gap-2 w-32">
+              <input type="checkbox" checked={schedule.isActive} onChange={(e) => updateWorkSchedule(schedule.id, { isActive: e.target.checked })} className="w-4 h-4 text-purple-600 rounded" />
+              <span className="font-medium text-sm">{schedule.day}</span>
+            </div>
+            <div className="flex items-center gap-2 flex-1">
+              <input type="time" value={schedule.startTime} onChange={(e) => updateWorkSchedule(schedule.id, { startTime: e.target.value })} className="border border-gray-300 rounded px-2 py-1 text-sm" />
+              <span className="text-gray-500">—</span>
+              <input type="time" value={schedule.endTime} onChange={(e) => updateWorkSchedule(schedule.id, { endTime: e.target.value })} className="border border-gray-300 rounded px-2 py-1 text-sm" />
+            </div>
+          </div>
+        ))}
+      </div>
+      <button onClick={handleSave} className="mt-6 bg-purple-600 text-white px-6 py-2.5 rounded-lg hover:bg-purple-700 flex items-center gap-2"><Save size={16} />{saved ? 'Сохранено ✓' : 'Сохранить'}</button>
+    </div>
+  );
+}
+
+function SubscriptionTab() {
+  const { settings, updateSettings } = useStore();
+  const [form, setForm] = useState({ subscriptionEnabled: settings.subscriptionEnabled, subscriptionTitle: settings.subscriptionTitle, subscriptionDescription: settings.subscriptionDescription });
+  const [saved, setSaved] = useState(false);
+
+  const handleSave = () => {
+    updateSettings(form);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <h2 className="text-lg font-bold mb-2">Настройки подписки</h2>
+      <p className="text-sm text-gray-500 mb-6">Управление формой подписки на обновления</p>
+      <div className="space-y-4 max-w-2xl">
+        <div className="flex items-center gap-2"><input type="checkbox" checked={form.subscriptionEnabled} onChange={(e) => setForm(p => ({ ...p, subscriptionEnabled: e.target.checked }))} className="w-4 h-4 text-purple-600 rounded" /><label className="text-sm font-medium">Включить форму подписки</label></div>
+        {form.subscriptionEnabled && (
+          <>
+            <div><label className="block text-sm font-medium mb-1">Заголовок</label><input type="text" value={form.subscriptionTitle} onChange={(e) => setForm(p => ({ ...p, subscriptionTitle: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" /></div>
+            <div><label className="block text-sm font-medium mb-1">Описание</label><textarea value={form.subscriptionDescription} onChange={(e) => setForm(p => ({ ...p, subscriptionDescription: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" rows={3} /></div>
+          </>
+        )}
+        <button onClick={handleSave} className="bg-purple-600 text-white px-6 py-2.5 rounded-lg hover:bg-purple-700 flex items-center gap-2"><Save size={16} />{saved ? 'Сохранено ✓' : 'Сохранить'}</button>
+      </div>
+    </div>
+  );
+}
+
 function ContactsTab() {
   const { settings, updateSettings } = useStore();
   const [form, setForm] = useState(settings);
@@ -190,7 +381,7 @@ function TextsTab() {
     setTimeout(() => setSaved(false), 2000); 
   };
 
-  const handleImageUpload = (field: 'heroImage' | 'logo' | 'icon') => {
+  const handleImageUpload = (field: 'heroImage' | 'heroBackgroundImage' | 'logo' | 'icon') => {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
@@ -227,6 +418,17 @@ function TextsTab() {
                 </div>
               </div>
               <p className="text-xs text-gray-500 mt-1">Рекомендуемый размер: 800×600px</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Фоновое изображение Hero</label>
+              <div className="flex items-center gap-3">
+                {form.heroBackgroundImage && <img src={form.heroBackgroundImage} alt="" className="w-24 h-24 object-cover rounded-lg border" />}
+                <div className="flex gap-2">
+                  <button onClick={() => handleImageUpload('heroBackgroundImage')} className="bg-white border border-gray-300 px-3 py-2 rounded-lg text-sm hover:bg-gray-50 flex items-center gap-1"><Upload size={14} />Загрузить</button>
+                  {form.heroBackgroundImage && <button onClick={() => setForm(p => ({ ...p, heroBackgroundImage: '' }))} className="text-red-500 text-sm hover:text-red-600">Удалить</button>}
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">Рекомендуемый размер: 1920×1080px (будет отображаться под градиентом)</p>
             </div>
           </div>
         </div>

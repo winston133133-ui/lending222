@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { User, Client, Character, Order, SiteSettings, Review, GalleryItem, CrossProduct } from '../types';
+import type { User, Client, Character, Order, SiteSettings, Review, GalleryItem, CrossProduct, ContactLink, Story, WorkSchedule } from '../types';
 
 const initialCharacters: Character[] = [
   {
@@ -61,6 +61,25 @@ const initialOrders: Order[] = [
   },
 ];
 
+const initialContactLinks: ContactLink[] = [
+  { id: 'cl1', type: 'phone', icon: '📞', label: 'Телефон', value: '+7 (8452) 123-456', link: 'tel:+78452123456', isActive: true },
+  { id: 'cl2', type: 'whatsapp', icon: '💬', label: 'WhatsApp', value: '+7 (927) 123-45-67', link: 'https://wa.me/79271234567', isActive: true },
+  { id: 'cl3', type: 'telegram', icon: '✈️', label: 'Telegram', value: '@rostovye_kukly', link: 'https://t.me/rostovye_kukly', isActive: true },
+  { id: 'cl4', type: 'max', icon: '💭', label: 'Макс', value: '@rostovye_kukly', link: 'https://max.ru/rostovye_kukly', isActive: true },
+];
+
+const initialStories: Story[] = [];
+
+const initialWorkSchedule: WorkSchedule[] = [
+  { id: 'ws1', day: 'Понедельник', startTime: '09:00', endTime: '21:00', isActive: true },
+  { id: 'ws2', day: 'Вторник', startTime: '09:00', endTime: '21:00', isActive: true },
+  { id: 'ws3', day: 'Среда', startTime: '09:00', endTime: '21:00', isActive: true },
+  { id: 'ws4', day: 'Четверг', startTime: '09:00', endTime: '21:00', isActive: true },
+  { id: 'ws5', day: 'Пятница', startTime: '09:00', endTime: '22:00', isActive: true },
+  { id: 'ws6', day: 'Суббота', startTime: '10:00', endTime: '22:00', isActive: true },
+  { id: 'ws7', day: 'Воскресенье', startTime: '10:00', endTime: '21:00', isActive: true },
+];
+
 const initialSettings: SiteSettings = {
   phone: '+7 (8452) 123-456',
   whatsapp: '+7 (927) 123-45-67',
@@ -77,6 +96,7 @@ const initialSettings: SiteSettings = {
   heroTitle: 'Ростовые куклы в Саратове',
   heroSubtitle: 'Яркие праздники для ваших детей!',
   heroImage: '',
+  heroBackgroundImage: '',
   logo: '',
   icon: '',
   siteSeoTitle: 'Ростовые куклы Саратов',
@@ -87,6 +107,12 @@ const initialSettings: SiteSettings = {
   notificationEmail: '',
   enableTelegramNotifications: false,
   enableEmailNotifications: false,
+  contactLinks: initialContactLinks,
+  stories: initialStories,
+  workSchedule: initialWorkSchedule,
+  subscriptionEnabled: true,
+  subscriptionTitle: 'Подпишитесь на обновления',
+  subscriptionDescription: 'Получайте новости о специальных предложениях и акциях первыми!',
 };
 
 const initialUsers: User[] = [
@@ -139,6 +165,16 @@ interface StoreState {
   addCrossProduct: (item: CrossProduct) => void;
   updateCrossProduct: (id: string, data: Partial<CrossProduct>) => void;
   deleteCrossProduct: (id: string) => void;
+  contactLinks: ContactLink[];
+  addContactLink: (link: ContactLink) => void;
+  updateContactLink: (id: string, data: Partial<ContactLink>) => void;
+  deleteContactLink: (id: string) => void;
+  stories: Story[];
+  addStory: (story: Story) => void;
+  updateStory: (id: string, data: Partial<Story>) => void;
+  deleteStory: (id: string) => void;
+  workSchedule: WorkSchedule[];
+  updateWorkSchedule: (id: string, data: Partial<WorkSchedule>) => void;
 }
 
 export const useStore = create<StoreState>()(
@@ -186,6 +222,16 @@ export const useStore = create<StoreState>()(
       addCrossProduct: (item) => set((state) => ({ crossProducts: [...state.crossProducts, item] })),
       updateCrossProduct: (id, data) => set((state) => ({ crossProducts: state.crossProducts.map((c) => (c.id === id ? { ...c, ...data } : c)) })),
       deleteCrossProduct: (id) => set((state) => ({ crossProducts: state.crossProducts.filter((c) => c.id !== id) })),
+      contactLinks: initialContactLinks,
+      addContactLink: (link) => set((state) => ({ contactLinks: [...state.contactLinks, link] })),
+      updateContactLink: (id, data) => set((state) => ({ contactLinks: state.contactLinks.map((c) => (c.id === id ? { ...c, ...data } : c)) })),
+      deleteContactLink: (id) => set((state) => ({ contactLinks: state.contactLinks.filter((c) => c.id !== id) })),
+      stories: initialStories,
+      addStory: (story) => set((state) => ({ stories: [...state.stories, story] })),
+      updateStory: (id, data) => set((state) => ({ stories: state.stories.map((s) => (s.id === id ? { ...s, ...data } : s)) })),
+      deleteStory: (id) => set((state) => ({ stories: state.stories.filter((s) => s.id !== id) })),
+      workSchedule: initialWorkSchedule,
+      updateWorkSchedule: (id, data) => set((state) => ({ workSchedule: state.workSchedule.map((w) => (w.id === id ? { ...w, ...data } : w)) })),
     }),
     {
       name: 'crm-party-storage',
