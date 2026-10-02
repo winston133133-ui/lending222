@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../store/useStore';
-import { Phone, Sparkles, X, Clock, Star, ChevronRight, ChevronLeft, MessageSquare, Send, MapPin, Shield, MessageCircle, ShoppingCart, Check, ArrowRight, ArrowLeft, Image as ImageIcon, CreditCard, ClipboardList } from 'lucide-react';
-import type { Character } from '../types';
+import { Phone, Sparkles, X, Clock, Star, ChevronRight, ChevronLeft, MessageSquare, Send, MapPin, Shield, MessageCircle, ShoppingCart, Check, ArrowRight, ArrowLeft, Image as ImageIcon, CreditCard, ClipboardList, Users, HelpCircle, MessageCircleIcon } from 'lucide-react';
+import type { Character, Story } from '../types';
 
 function HeroImageAnimation({ image }: { image: string }) {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -44,6 +44,135 @@ function HeroImageAnimation({ image }: { image: string }) {
         <div className="absolute -top-10 left-1/4 text-5xl transition-transform duration-300 animate-pulse" style={{ transform: `translate(${mousePos.x * 0.6}px, ${mousePos.y * 0.6}px)`, animationDuration: '2.5s', animationDelay: '1s' }}>⭐</div>
         <div className="absolute bottom-1/4 -left-10 text-5xl transition-transform duration-300 animate-ping" style={{ transform: `translate(${-mousePos.x * 0.7}px, ${-mousePos.y * 0.7}px)`, animationDuration: '3s', animationDelay: '0.3s' }}>🎉</div>
         <div className="absolute top-1/4 -right-12 text-4xl transition-transform duration-300 animate-bounce" style={{ transform: `translate(${mousePos.x * 0.9}px, ${mousePos.y * 0.9}px)`, animationDuration: '2.8s', animationDelay: '0.7s' }}>🎁</div>
+      </div>
+    </div>
+  );
+}
+
+function StoriesViewer({ stories, onClose }: { stories: Story[]; onClose: () => void }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const currentStory = stories[currentIndex];
+
+  useEffect(() => {
+    if (!currentStory) return;
+
+    if (currentStory.type === 'video' && videoRef.current) {
+      videoRef.current.play();
+      const handleVideoEnd = () => {
+        if (currentIndex < stories.length - 1) {
+          setCurrentIndex(currentIndex + 1);
+          setProgress(0);
+        } else {
+          onClose();
+        }
+      };
+      videoRef.current.addEventListener('ended', handleVideoEnd);
+      return () => videoRef.current?.removeEventListener('ended', handleVideoEnd);
+    } else {
+      const interval = setInterval(() => {
+        setProgress(prev => {
+          if (prev >= 100) {
+            if (currentIndex < stories.length - 1) {
+              setCurrentIndex(currentIndex + 1);
+              return 0;
+            } else {
+              onClose();
+              return 0;
+            }
+          }
+          return prev + 1;
+        });
+      }, 100);
+      return () => clearInterval(interval);
+    }
+  }, [currentIndex, currentStory, stories.length, onClose]);
+
+  const goToNext = () => {
+    if (currentIndex < stories.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+      setProgress(0);
+    } else {
+      onClose();
+    }
+  };
+
+  const goToPrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+      setProgress(0);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center" onClick={onClose}>
+      <button onClick={onClose} className="absolute top-4 right-4 text-white hover:text-gray-300 z-10">
+        <X size={32} />
+      </button>
+      
+      <div className="relative w-full max-w-2xl h-[80vh] mx-4" onClick={(e) => e.stopPropagation()}>
+        {/* Progress bars */}
+        <div className="absolute top-4 left-4 right-4 flex gap-1 z-10">
+          {stories.map((_, idx) => (
+            <div key={idx} className="flex-1 h-1 bg-white/30 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-white transition-all duration-100"
+                style={{ 
+                  width: idx < currentIndex ? '100%' : idx === currentIndex ? `${progress}%` : '0%'
+                }}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Story content */}
+        <div className="relative w-full h-full rounded-2xl overflow-hidden">
+          {currentStory.type === 'video' ? (
+            <video 
+              ref={videoRef}
+              src={currentStory.media} 
+              className="w-full h-full object-contain"
+              controls={false}
+            />
+          ) : (
+            <img 
+              src={currentStory.media} 
+              alt={currentStory.title}
+              className="w-full h-full object-contain"
+            />
+          )}
+          
+          {/* Story info */}
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
+            <h3 className="text-white text-xl font-bold mb-2">{currentStory.title}</h3>
+            {currentStory.description && (
+              <p className="text-white/90 text-sm">{currentStory.description}</p>
+            )}
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <button 
+          onClick={goToPrev}
+          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white p-3 rounded-full backdrop-blur-sm disabled:opacity-30 disabled:cursor-not-allowed"
+          disabled={currentIndex === 0}
+        >
+          <ChevronLeft size={28} />
+        </button>
+        <button 
+          onClick={goToNext}
+          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white p-3 rounded-full backdrop-blur-sm"
+        >
+          <ChevronRight size={28} />
+        </button>
+
+        {/* Click areas for navigation */}
+        <div className="absolute inset-0 flex">
+          <div className="w-1/3 h-full cursor-pointer" onClick={goToPrev} />
+          <div className="w-1/3 h-full" />
+          <div className="w-1/3 h-full cursor-pointer" onClick={goToNext} />
+        </div>
       </div>
     </div>
   );
@@ -150,6 +279,7 @@ export default function Landing() {
   const [consent, setConsent] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedCrossProducts, setSelectedCrossProducts] = useState<{ productId: string; quantity: number }[]>([]);
+  const [showStoriesViewer, setShowStoriesViewer] = useState(false);
   const [formData, setFormData] = useState({ name: '', phone: '+7 ', date: '', time: '', address: '', characterId: '', serviceId: '', songs: '', comment: '' });
 
   const selectedCharacter = characters.find((c) => c.id === formData.characterId);
@@ -315,12 +445,12 @@ export default function Landing() {
           <div className="max-w-7xl mx-auto px-4">
             <h2 className="text-3xl lg:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-yellow-600 via-orange-600 to-red-600 bg-clip-text text-transparent flex items-center justify-center gap-3">
               <ImageIcon size={40} className="text-yellow-600" />
-              Истории
+              Яркие моменты
             </h2>
-            <p className="text-center text-gray-600 mb-12 text-lg">Яркие моменты наших праздников</p>
+            <p className="text-center text-gray-600 mb-12 text-lg">Погрузитесь в атмосферу наших праздников</p>
             <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
               {stories.filter(s => s.isActive).map((story) => (
-                <div key={story.id} className="group relative w-40 h-56 flex-shrink-0 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all cursor-pointer" onClick={() => window.open(story.media, '_blank')}>
+                <div key={story.id} className="group relative w-40 h-56 flex-shrink-0 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all cursor-pointer" onClick={() => setShowStoriesViewer(true)}>
                   {story.type === 'video' ? (
                     <video src={story.media} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" muted />
                   ) : (
@@ -344,9 +474,20 @@ export default function Landing() {
         </section>
       )}
 
+      {/* Stories Viewer Modal */}
+      {showStoriesViewer && (
+        <StoriesViewer 
+          stories={stories.filter(s => s.isActive)} 
+          onClose={() => setShowStoriesViewer(false)} 
+        />
+      )}
+
       <section id="characters" className="py-20 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12">Наши персонажи</h2>
+          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 flex items-center justify-center gap-3">
+            <Users size={40} className="text-[#800080]" />
+            <span>Наши персонажи</span>
+          </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {characters.filter(c => c.isActive).map((char) => (
               <CharacterCard key={char.id} character={char} onOrder={() => { setFormData(p => ({ ...p, characterId: char.id, serviceId: '' })); setShowOrderForm(true); }} />
@@ -357,7 +498,10 @@ export default function Landing() {
 
       <section id="how" className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-[#800080] via-[#990099] to-orange-600 bg-clip-text text-transparent">Как заказать?</h2>
+          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-[#800080] via-[#990099] to-orange-600 bg-clip-text text-transparent flex items-center justify-center gap-3">
+            <HelpCircle size={40} className="text-[#800080]" />
+            Как заказать?
+          </h2>
           <div className="grid md:grid-cols-3 gap-8">
             {(settings.howToOrderSteps || []).map((item) => (
               <div key={item.id} className="relative group">
@@ -447,14 +591,14 @@ export default function Landing() {
                 <p className="text-xs text-white/70 mt-3">Мы не рассылаем спам. Только интересные новости и акции!</p>
               </div>
               <div className="hidden md:block relative">
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-16 h-16 bg-gradient-to-br from-[#800080] to-[#990099] rotate-45 rounded-lg shadow-2xl"></div>
-                <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-2xl overflow-visible">
+                <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-16 h-16 bg-gradient-to-br from-[#800080] to-[#990099] rotate-45 rounded-lg"></div>
+                <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 overflow-visible">
                   {settings.subscriptionImage ? (
                     <div className="relative -mt-16 mb-4">
-                      <img src={settings.subscriptionImage} alt="Подписка" className="w-full h-auto max-h-64 object-contain rounded-lg shadow-2xl" />
+                      <img src={settings.subscriptionImage} alt="Подписка" className="w-full h-auto max-h-64 object-contain rounded-lg animate-float" />
                     </div>
                   ) : (
-                    <div className="text-6xl text-center mb-4 -mt-8">🎉</div>
+                    <div className="text-6xl text-center mb-4 -mt-8 animate-bounce">🎉</div>
                   )}
                   <div className="text-center">
                     <p className="font-bold text-lg mb-2">Присоединяйтесь!</p>
@@ -469,7 +613,10 @@ export default function Landing() {
 
       <section id="reviews" className="py-20 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12">Отзывы клиентов</h2>
+          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 flex items-center justify-center gap-3">
+            <MessageCircleIcon size={40} className="text-[#800080]" />
+            Отзывы клиентов
+          </h2>
           {(reviews || []).filter(r => r.isActive).length === 0 ? <p className="text-center text-gray-400">Отзывов пока нет</p> : (
             <div className="grid md:grid-cols-3 gap-8">
               {(reviews || []).filter(r => r.isActive).map((review) => (
@@ -503,9 +650,13 @@ export default function Landing() {
 
       <section id="contacts" className="py-20 bg-gray-900 text-white scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12">Контакты</h2>
-          <div className="grid md:grid-cols-2 gap-12">
+          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 flex items-center justify-center gap-3">
+            <Phone size={40} className="text-[#800080]" />
+            Свяжитесь с нами
+          </h2>
+          <div className="grid md:grid-cols-3 gap-12">
             <div className="space-y-6">
+              <h3 className="text-xl font-bold mb-4 text-[#990099]">Наши контакты</h3>
               {(settings.contactLinks || []).filter(c => c.isActive).map((contact) => (
                 <div key={contact.id} className="flex items-center gap-4">
                   <span className="text-3xl">{contact.icon}</span>
@@ -523,6 +674,8 @@ export default function Landing() {
                 <h3 className="font-bold text-lg mb-4 flex items-center gap-2"><MapPin size={20} className="text-[#800080]" />Условия доставки</h3>
                 <p className="text-gray-300 leading-relaxed">{settings.deliveryConditions}</p>
               </div>
+            </div>
+            <div className="space-y-6">
               <div className="bg-gray-800 rounded-2xl p-6">
                 <h3 className="font-bold text-lg mb-4 flex items-center gap-2"><Clock size={20} className="text-[#800080]" />Правила работы</h3>
                 <p className="text-gray-300 leading-relaxed">{settings.workRules}</p>
