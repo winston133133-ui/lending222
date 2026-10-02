@@ -657,6 +657,54 @@ export default function Landing() {
           <div className="grid md:grid-cols-3 gap-12">
             <div className="space-y-6">
               <h3 className="text-xl font-bold mb-4 text-[#990099]">Наши контакты</h3>
+              
+              {/* Основные контакты из настроек */}
+              {settings.phone && (
+                <div className="flex items-center gap-4">
+                  <span className="text-3xl">📞</span>
+                  <div>
+                    <p className="text-sm text-gray-400">Телефон</p>
+                    <a href={`tel:${settings.phone}`} className="text-lg hover:text-[#990099] transition">
+                      {settings.phone}
+                    </a>
+                  </div>
+                </div>
+              )}
+              {settings.whatsapp && (
+                <div className="flex items-center gap-4">
+                  <span className="text-3xl">💬</span>
+                  <div>
+                    <p className="text-sm text-gray-400">WhatsApp</p>
+                    <a href={`https://wa.me/${settings.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-lg hover:text-[#990099] transition">
+                      {settings.whatsapp}
+                    </a>
+                  </div>
+                </div>
+              )}
+              {settings.telegram && (
+                <div className="flex items-center gap-4">
+                  <span className="text-3xl">✈️</span>
+                  <div>
+                    <p className="text-sm text-gray-400">Telegram</p>
+                    <a href={`https://t.me/${settings.telegram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="text-lg hover:text-[#990099] transition">
+                      {settings.telegram}
+                    </a>
+                  </div>
+                </div>
+              )}
+              {settings.maxMessenger && (
+                <div className="flex items-center gap-4">
+                  <span className="text-3xl">💭</span>
+                  <div>
+                    <p className="text-sm text-gray-400">Макс</p>
+                    <a href={`https://max.ru/${settings.maxMessenger.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="text-lg hover:text-[#990099] transition">
+                      {settings.maxMessenger}
+                    </a>
+                  </div>
+                </div>
+              )}
+              
+              {/* Дополнительные контактные ссылки */}
               {(settings.contactLinks || []).filter(c => c.isActive).map((contact) => (
                 <div key={contact.id} className="flex items-center gap-4">
                   <span className="text-3xl">{contact.icon}</span>
