@@ -332,7 +332,7 @@ function ContactsTab() {
   const [saved, setSaved] = useState(false);
   const [showLinkForm, setShowLinkForm] = useState(false);
   const [editingLinkId, setEditingLinkId] = useState<string | null>(null);
-  const [linkForm, setLinkForm] = useState<{ type: 'phone' | 'whatsapp' | 'telegram' | 'max' | 'email' | 'address', icon: string, label: string, value: string, link: string, isActive: boolean }>({ type: 'phone', icon: '📞', label: '', value: '', link: '', isActive: true });
+  const [linkForm, setLinkForm] = useState<{ type: 'phone' | 'link', icon: string, label: string, value: string, link: string, isActive: boolean }>({ type: 'phone', icon: '', label: '', value: '', link: '', isActive: true });
 
   const handleSave = () => { 
     updateSettings(form); 
@@ -346,9 +346,27 @@ function ContactsTab() {
     } else {
       addContactLink({ id: Date.now().toString(), ...linkForm });
     }
-    setLinkForm({ type: 'phone', icon: '📞', label: '', value: '', link: '', isActive: true });
+    setLinkForm({ type: 'phone', icon: '', label: '', value: '', link: '', isActive: true });
     setShowLinkForm(false);
     setEditingLinkId(null);
+  };
+
+  const handleIconUpload = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const base64 = ev.target?.result as string;
+          setLinkForm(p => ({ ...p, icon: base64 }));
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    input.click();
   };
 
   return (
@@ -358,20 +376,35 @@ function ContactsTab() {
           <h2 className="text-lg font-bold">Контакты</h2>
           <p className="text-sm text-gray-500 mt-1">Управление контактными данными на лендинге</p>
         </div>
-        <button onClick={() => { setLinkForm({ type: 'phone', icon: '📞', label: '', value: '', link: '', isActive: true }); setShowLinkForm(true); setEditingLinkId(null); }} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center gap-1 text-sm"><Plus size={16} />Добавить контакт</button>
+        <button onClick={() => { setLinkForm({ type: 'phone', icon: '', label: '', value: '', link: '', isActive: true }); setShowLinkForm(true); setEditingLinkId(null); }} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center gap-1 text-sm"><Plus size={16} />Добавить контакт</button>
       </div>
 
         {showLinkForm && (
           <div className="mb-6 p-4 bg-purple-50 rounded-lg border border-purple-100 space-y-3">
-            <h3 className="font-medium">{editingLinkId ? 'Редактирование' : 'Новая ссылка'}</h3>
+            <h3 className="font-medium">{editingLinkId ? 'Редактирование' : 'Новый контакт'}</h3>
             <div className="grid md:grid-cols-2 gap-3">
-              <div><label className="block text-sm font-medium mb-1">Тип</label><select value={linkForm.type} onChange={(e) => setLinkForm(p => ({ ...p, type: e.target.value as any }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"><option value="phone">📞 Телефон</option><option value="whatsapp">💬 WhatsApp</option><option value="telegram">✈️ Telegram</option><option value="max">💭 Макс</option><option value="email">📧 Email</option><option value="address">📍 Адрес</option></select></div>
-              <div><label className="block text-sm font-medium mb-1">Иконка (эмодзи)</label><input type="text" value={linkForm.icon} onChange={(e) => setLinkForm(p => ({ ...p, icon: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="📞" /></div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Тип</label>
+                <select value={linkForm.type} onChange={(e) => setLinkForm(p => ({ ...p, type: e.target.value as any }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                  <option value="phone">📞 Телефон</option>
+                  <option value="link">🔗 Ссылка</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Иконка (URL или загрузка)</label>
+                <div className="flex gap-2">
+                  {linkForm.icon && (
+                    <img src={linkForm.icon} alt="Иконка" className="w-10 h-10 object-contain rounded border" />
+                  )}
+                  <input type="text" value={linkForm.icon} onChange={(e) => setLinkForm(p => ({ ...p, icon: e.target.value }))} className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="https://example.com/icon.png" />
+                  <button onClick={handleIconUpload} className="bg-white border border-gray-300 px-3 py-2 rounded-lg text-sm hover:bg-gray-50 flex items-center gap-1"><Upload size={14} /></button>
+                </div>
+              </div>
               <div><label className="block text-sm font-medium mb-1">Название</label><input type="text" value={linkForm.label} onChange={(e) => setLinkForm(p => ({ ...p, label: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Телефон" /></div>
               <div><label className="block text-sm font-medium mb-1">Значение</label><input type="text" value={linkForm.value} onChange={(e) => setLinkForm(p => ({ ...p, value: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="+7 (999) 123-45-67" /></div>
               <div className="md:col-span-2"><label className="block text-sm font-medium mb-1">Ссылка</label><input type="text" value={linkForm.link} onChange={(e) => setLinkForm(p => ({ ...p, link: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="tel:+79991234567 или https://..." /></div>
             </div>
-            <div className="flex items-center gap-2"><input type="checkbox" checked={linkForm.isActive} onChange={(e) => setLinkForm(p => ({ ...p, isActive: e.target.checked }))} className="w-4 h-4 text-purple-600 rounded" /><label className="text-sm font-medium">Активна</label></div>
+            <div className="flex items-center gap-2"><input type="checkbox" checked={linkForm.isActive} onChange={(e) => setLinkForm(p => ({ ...p, isActive: e.target.checked }))} className="w-4 h-4 text-purple-600 rounded" /><label className="text-sm font-medium">Активен</label></div>
             <div className="flex gap-2"><button onClick={handleSaveLink} disabled={!linkForm.label || !linkForm.value} className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700 disabled:opacity-50 flex items-center gap-1"><Save size={14} />{editingLinkId ? 'Обновить' : 'Создать'}</button><button onClick={() => { setShowLinkForm(false); setEditingLinkId(null); }} className="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">Отмена</button></div>
           </div>
         )}
@@ -380,7 +413,11 @@ function ContactsTab() {
           {(contactLinks || []).map((link) => (
             <div key={link.id} className={`flex items-center justify-between p-4 border rounded-lg ${link.isActive ? 'border-gray-200' : 'border-gray-100 opacity-60'}`}>
               <div className="flex items-center gap-3">
-                <span className="text-2xl">{link.icon}</span>
+                {link.icon ? (
+                  <img src={link.icon} alt={link.label} className="w-10 h-10 object-contain rounded" />
+                ) : (
+                  <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center text-gray-400 text-xs">Нет</div>
+                )}
                 <div><p className="font-medium">{link.label}</p><p className="text-sm text-gray-500">{link.value}</p><p className="text-xs text-gray-400 mt-1">{link.link}</p></div>
               </div>
               <div className="flex items-center gap-1">

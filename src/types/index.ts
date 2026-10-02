@@ -130,8 +130,8 @@ export interface PaymentMethod {
 
 export interface ContactLink {
   id: string;
-  type: 'phone' | 'whatsapp' | 'telegram' | 'max' | 'email' | 'address';
-  icon: string;
+  type: 'phone' | 'link';
+  icon: string; // URL изображения
   label: string;
   value: string;
   link: string;

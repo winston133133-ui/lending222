@@ -62,10 +62,10 @@ const initialOrders: Order[] = [
 ];
 
 const initialContactLinks: ContactLink[] = [
-  { id: 'cl1', type: 'phone', icon: '📞', label: 'Телефон', value: '+7 (8452) 123-456', link: 'tel:+78452123456', isActive: true },
-  { id: 'cl2', type: 'whatsapp', icon: '💬', label: 'WhatsApp', value: '+7 (927) 123-45-67', link: 'https://wa.me/79271234567', isActive: true },
-  { id: 'cl3', type: 'telegram', icon: '✈️', label: 'Telegram', value: '@rostovye_kukly', link: 'https://t.me/rostovye_kukly', isActive: true },
-  { id: 'cl4', type: 'max', icon: '💭', label: 'Макс', value: '@rostovye_kukly', link: 'https://max.ru/rostovye_kukly', isActive: true },
+  { id: 'cl1', type: 'phone', icon: 'https://cdn-icons-png.flaticon.com/512/724/724664.png', label: 'Телефон', value: '+7 (8452) 123-456', link: 'tel:+78452123456', isActive: true },
+  { id: 'cl2', type: 'link', icon: 'https://cdn-icons-png.flaticon.com/512/733/733585.png', label: 'WhatsApp', value: '+7 (927) 123-45-67', link: 'https://wa.me/79271234567', isActive: true },
+  { id: 'cl3', type: 'link', icon: 'https://cdn-icons-png.flaticon.com/512/2111/2111646.png', label: 'Telegram', value: '@rostovye_kukly', link: 'https://t.me/rostovye_kukly', isActive: true },
+  { id: 'cl4', type: 'link', icon: 'https://cdn-icons-png.flaticon.com/512/5968/5968769.png', label: 'Макс', value: '@rostovye_kukly', link: 'https://max.ru/rostovye_kukly', isActive: true },
 ];
 
 const initialStories: Story[] = [];

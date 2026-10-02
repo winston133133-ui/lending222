@@ -482,11 +482,17 @@ export default function Landing() {
         />
       )}
 
-      <section id="characters" className="py-20 scroll-mt-20">
-        <div className="max-w-7xl mx-auto px-4">
+      <section id="characters" className="py-20 scroll-mt-20 relative overflow-hidden">
+        {/* Декоративные элементы */}
+        <div className="absolute top-10 left-10 w-32 h-32 bg-[#800080]/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 right-10 w-40 h-40 bg-[#990099]/5 rounded-full blur-3xl"></div>
+        
+        <div className="max-w-7xl mx-auto px-4 relative z-10">
           <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 flex items-center justify-center gap-3">
-            <Users size={40} className="text-[#800080]" />
-            <span>Наши персонажи</span>
+            <div className="p-3 bg-gradient-to-br from-[#800080] to-[#990099] rounded-2xl shadow-lg">
+              <Users size={40} className="text-white" />
+            </div>
+            <span className="bg-gradient-to-r from-[#800080] to-[#990099] bg-clip-text text-transparent">Наши персонажи</span>
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {characters.filter(c => c.isActive).map((char) => (
@@ -496,18 +502,28 @@ export default function Landing() {
         </div>
       </section>
 
-      <section id="how" className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 scroll-mt-20">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-[#800080] via-[#990099] to-orange-600 bg-clip-text text-transparent flex items-center justify-center gap-3">
-            <HelpCircle size={40} className="text-[#800080]" />
-            Как заказать?
+      <section id="how" className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 scroll-mt-20 relative overflow-hidden">
+        {/* Декоративные элементы */}
+        <div className="absolute top-20 right-20 text-8xl opacity-10 animate-pulse">✨</div>
+        <div className="absolute bottom-20 left-20 text-7xl opacity-10 animate-bounce">🎈</div>
+        
+        <div className="max-w-7xl mx-auto px-4 relative z-10">
+          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 flex items-center justify-center gap-3">
+            <div className="p-3 bg-gradient-to-br from-[#800080] via-[#990099] to-orange-500 rounded-2xl shadow-lg">
+              <HelpCircle size={40} className="text-white" />
+            </div>
+            <span className="bg-gradient-to-r from-[#800080] via-[#990099] to-orange-600 bg-clip-text text-transparent">Как заказать?</span>
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
-            {(settings.howToOrderSteps || []).map((item) => (
+            {(settings.howToOrderSteps || []).map((item, index) => (
               <div key={item.id} className="relative group">
-                <div className="relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2">
-                  <div className={`absolute -top-4 -right-4 w-12 h-12 bg-gradient-to-br ${item.color} text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg`}>{item.step}</div>
-                  <div className="text-6xl mb-4">{item.icon}</div>
+                {/* Соединительная линия */}
+                {index < (settings.howToOrderSteps?.length || 0) - 1 && (
+                  <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-1 bg-gradient-to-r from-[#800080] to-transparent rounded-full"></div>
+                )}
+                <div className="relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border-2 border-transparent hover:border-[#800080]/20">
+                  <div className={`absolute -top-4 -right-4 w-14 h-14 bg-gradient-to-br ${item.color} text-white rounded-full flex items-center justify-center text-2xl font-bold shadow-lg animate-pulse`} style={{ animationDuration: '3s' }}>{item.step}</div>
+                  <div className="text-6xl mb-4 transform group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
                   <h3 className={`font-bold text-xl mb-3 bg-gradient-to-r ${item.color} bg-clip-text text-transparent`}>{item.title}</h3>
                   <p className="text-gray-600">{item.description}</p>
                 </div>
@@ -517,32 +533,56 @@ export default function Landing() {
         </div>
       </section>
 
-      <section id="payment" className="py-20 bg-gradient-to-br from-green-50 via-emerald-50 to-blue-50 scroll-mt-20">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-green-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent flex items-center justify-center gap-3">
-            <CreditCard size={40} className="text-green-600" />
-            Способы оплаты
+      <section id="payment" className="py-20 bg-gradient-to-br from-green-50 via-emerald-50 to-blue-50 scroll-mt-20 relative overflow-hidden">
+        {/* Декоративные элементы */}
+        <div className="absolute top-1/2 left-0 w-40 h-40 bg-green-200/30 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/3 right-0 w-40 h-40 bg-blue-200/30 rounded-full blur-3xl"></div>
+        
+        <div className="max-w-6xl mx-auto px-4 relative z-10">
+          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 flex items-center justify-center gap-3">
+            <div className="p-3 bg-gradient-to-br from-green-600 via-blue-600 to-indigo-600 rounded-2xl shadow-lg">
+              <CreditCard size={40} className="text-white" />
+            </div>
+            <span className="bg-gradient-to-r from-green-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">Способы оплаты</span>
           </h2>
           <div className="grid md:grid-cols-2 gap-6">
-            {(settings.paymentMethods || []).filter(m => m.isActive).map((method) => {
+            {(settings.paymentMethods || []).filter(m => m.isActive).map((method, index) => {
               const colorClasses: any = {
-                green: { border: 'border-green-200', gradient: 'from-green-500 to-emerald-600', dot: 'bg-green-500' },
-                blue: { border: 'border-blue-200', gradient: 'from-blue-500 to-indigo-600', dot: 'bg-blue-500' },
-                purple: { border: 'border-purple-200', gradient: 'from-purple-500 to-purple-600', dot: 'bg-purple-500' },
-                orange: { border: 'border-orange-200', gradient: 'from-orange-500 to-orange-600', dot: 'bg-orange-500' }
+                green: { border: 'border-green-200', gradient: 'from-green-500 to-emerald-600', dot: 'bg-green-500', bg: 'bg-green-50' },
+                blue: { border: 'border-blue-200', gradient: 'from-blue-500 to-indigo-600', dot: 'bg-blue-500', bg: 'bg-blue-50' },
+                purple: { border: 'border-purple-200', gradient: 'from-purple-500 to-purple-600', dot: 'bg-purple-500', bg: 'bg-purple-50' },
+                orange: { border: 'border-orange-200', gradient: 'from-orange-500 to-orange-600', dot: 'bg-orange-500', bg: 'bg-orange-50' }
               };
               const colors = colorClasses[method.color] || colorClasses.green;
               return (
-                <div key={method.id} className={`bg-white rounded-3xl shadow-2xl p-6 lg:p-8 border-2 ${colors.border}`}>
+                <div key={method.id} className={`relative group bg-white rounded-3xl shadow-xl p-6 lg:p-8 border-2 ${colors.border} hover:shadow-2xl transition-all duration-300 hover:-translate-y-1`}>
+                  {/* Декоративный номер */}
+                  <div className={`absolute -top-4 -right-4 w-12 h-12 ${colors.bg} rounded-full flex items-center justify-center text-2xl font-bold shadow-lg`}>
+                    {index + 1}
+                  </div>
+                  
                   <div className="flex items-center gap-4 mb-6">
-                    <div className={`bg-gradient-to-br ${colors.gradient} p-4 rounded-2xl text-white shadow-lg text-4xl`}>{method.icon}</div>
-                    <div><h3 className="text-xl font-bold text-gray-800">{method.title}</h3><p className="text-gray-500 text-sm">{method.subtitle}</p></div>
+                    <div className={`bg-gradient-to-br ${colors.gradient} p-4 rounded-2xl text-white shadow-lg text-4xl transform group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300`}>{method.icon}</div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-800">{method.title}</h3>
+                      <p className="text-gray-500 text-sm">{method.subtitle}</p>
+                    </div>
                   </div>
                   <div className="space-y-3 text-gray-700 text-sm">
                     {method.items.map((item, idx) => (
-                      <div key={idx} className="flex items-start gap-3"><div className={`w-2 h-2 ${colors.dot} rounded-full mt-2 flex-shrink-0`}></div><p>{item}</p></div>
+                      <div key={idx} className="flex items-start gap-3 transform hover:translate-x-2 transition-transform duration-200">
+                        <div className={`w-2 h-2 ${colors.dot} rounded-full mt-2 flex-shrink-0`}></div>
+                        <p>{item}</p>
+                      </div>
                     ))}
-                    {method.warning && <div className="bg-amber-50 border-l-4 border-amber-500 p-3 rounded-r-lg mt-4"><p className="font-semibold text-amber-900 text-xs">⚠️ {method.warning}</p></div>}
+                    {method.warning && (
+                      <div className="bg-amber-50 border-l-4 border-amber-500 p-3 rounded-r-lg mt-4 hover:bg-amber-100 transition-colors">
+                        <p className="font-semibold text-amber-900 text-xs flex items-center gap-2">
+                          <span className="text-lg">⚠️</span>
+                          {method.warning}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
@@ -553,19 +593,35 @@ export default function Landing() {
 
       {/* Gallery Section */}
       {(gallery || []).filter(g => g.isActive).length > 0 && (
-        <section id="gallery" className="py-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 scroll-mt-20">
-          <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl lg:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center justify-center gap-3">
-              <ImageIcon size={40} className="text-indigo-600" />
-              Галерея
+        <section id="gallery" className="py-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 scroll-mt-20 relative overflow-hidden">
+          {/* Декоративные элементы */}
+          <div className="absolute top-0 left-1/4 w-64 h-64 bg-gradient-to-br from-[#800080]/10 to-transparent rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-gradient-to-tl from-[#990099]/10 to-transparent rounded-full blur-3xl"></div>
+          
+          <div className="max-w-7xl mx-auto px-4 relative z-10">
+            <h2 className="text-3xl lg:text-4xl font-bold text-center mb-4 flex items-center justify-center gap-3">
+              <div className="p-3 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-2xl shadow-lg">
+                <ImageIcon size={40} className="text-white" />
+              </div>
+              <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">Галерея</span>
             </h2>
             <p className="text-center text-gray-600 mb-12 text-lg">Наши работы и праздники</p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {(gallery || []).filter(g => g.isActive).map((item) => (
-                <div key={item.id} className="group relative aspect-square rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all cursor-pointer">
-                  <img src={item.image} alt={item.description} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                    <p className="text-white text-sm font-medium">{item.description}</p>
+              {(gallery || []).filter(g => g.isActive).map((item, index) => (
+                <div key={item.id} className={`group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:scale-105 ${
+                  index % 5 === 0 ? 'aspect-square' : index % 3 === 0 ? 'aspect-[3/4]' : 'aspect-square'
+                }`}>
+                  <img src={item.image} alt={item.description} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                    <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                      <p className="text-white text-sm font-medium">{item.description}</p>
+                    </div>
+                  </div>
+                  {/* Декоративный уголок */}
+                  <div className="absolute top-2 right-2 w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
                   </div>
                 </div>
               ))}
@@ -579,18 +635,8 @@ export default function Landing() {
         <section className="py-12 bg-gradient-to-br from-[#800080] via-[#990099] to-orange-500 text-white relative overflow-hidden">
           <div className="max-w-6xl mx-auto px-4">
             <div className="grid md:grid-cols-2 gap-8 items-center">
-              <div>
-                <h2 className="text-2xl lg:text-3xl font-bold mb-3">{settings.subscriptionTitle}</h2>
-                <p className="text-base text-white/90 mb-6">{settings.subscriptionDescription}</p>
-                <form onSubmit={(e) => { e.preventDefault(); alert('Спасибо за подписку!'); }} className="flex flex-col sm:flex-row gap-3">
-                  <input type="email" required placeholder="Ваш email" className="flex-1 px-5 py-3 rounded-full text-gray-800 focus:outline-none focus:ring-4 focus:ring-white/50" />
-                  <button type="submit" className="bg-white text-[#800080] px-6 py-3 rounded-full font-bold hover:bg-purple-50 transition shadow-xl whitespace-nowrap">
-                    Подписаться
-                  </button>
-                </form>
-                <p className="text-xs text-white/70 mt-3">Мы не рассылаем спам. Только интересные новости и акции!</p>
-              </div>
-              <div className="hidden md:block relative">
+              {/* Изображение - на мобильных сверху, на десктопе справа */}
+              <div className="order-1 md:order-2 relative">
                 <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-16 h-16 bg-gradient-to-br from-[#800080] to-[#990099] rotate-45 rounded-lg"></div>
                 <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 overflow-visible">
                   {settings.subscriptionImage ? (
@@ -606,24 +652,64 @@ export default function Landing() {
                   </div>
                 </div>
               </div>
+              
+              {/* Форма - на мобильных снизу, на десктопе слева */}
+              <div className="order-2 md:order-1">
+                <h2 className="text-2xl lg:text-3xl font-bold mb-3">{settings.subscriptionTitle}</h2>
+                <p className="text-base text-white/90 mb-6">{settings.subscriptionDescription}</p>
+                <form onSubmit={(e) => { e.preventDefault(); alert('Спасибо за подписку!'); }} className="space-y-4">
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <input 
+                      type="email" 
+                      required 
+                      placeholder="Ваш email" 
+                      className="flex-1 px-5 py-3 rounded-full text-gray-800 border-2 border-white/30 focus:outline-none focus:ring-4 focus:ring-white/50 focus:border-white/60 bg-white/95" 
+                    />
+                    <button type="submit" className="bg-white text-[#800080] px-6 py-3 rounded-full font-bold hover:bg-purple-50 transition shadow-xl whitespace-nowrap">
+                      Подписаться
+                    </button>
+                  </div>
+                  <label className="flex items-start gap-2 cursor-pointer">
+                    <input type="checkbox" required className="mt-1 w-4 h-4 text-white rounded focus:ring-white" />
+                    <span className="text-xs text-white/90">Я согласен на обработку персональных данных в соответствии с <Link to="/privacy" target="_blank" className="underline hover:text-white">политикой конфиденциальности</Link></span>
+                  </label>
+                </form>
+                <p className="text-xs text-white/70 mt-3">Мы не рассылаем спам. Только интересные новости и акции!</p>
+              </div>
             </div>
           </div>
         </section>
       )}
 
-      <section id="reviews" className="py-20 scroll-mt-20">
-        <div className="max-w-7xl mx-auto px-4">
+      <section id="reviews" className="py-20 scroll-mt-20 relative overflow-hidden">
+        {/* Декоративный фон */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#800080]/5 via-transparent to-[#990099]/5"></div>
+        
+        <div className="max-w-7xl mx-auto px-4 relative z-10">
           <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 flex items-center justify-center gap-3">
-            <MessageCircleIcon size={40} className="text-[#800080]" />
-            Отзывы клиентов
+            <div className="p-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl shadow-lg">
+              <MessageCircleIcon size={40} className="text-white" />
+            </div>
+            <span>Отзывы клиентов</span>
           </h2>
           {(reviews || []).filter(r => r.isActive).length === 0 ? <p className="text-center text-gray-400">Отзывов пока нет</p> : (
             <div className="grid md:grid-cols-3 gap-8">
-              {(reviews || []).filter(r => r.isActive).map((review) => (
-                <div key={review.id} className="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
-                  <div className="flex gap-1 mb-3">{Array.from({ length: review.rating }).map((_, j) => <Star key={j} size={16} className="fill-yellow-400 text-yellow-400" />)}</div>
-                  <p className="text-gray-600 mb-4 italic">"{review.text}"</p>
-                  <p className="font-bold text-[#800080]">{review.name}</p>
+              {(reviews || []).filter(r => r.isActive).map((review, index) => (
+                <div key={review.id} className="relative group">
+                  {/* Декоративная рамка */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#800080] to-[#990099] rounded-2xl transform group-hover:scale-105 transition-transform duration-300 opacity-0 group-hover:opacity-20"></div>
+                  <div className="relative bg-white p-6 rounded-2xl shadow-md border border-gray-100 hover:shadow-xl transition-all duration-300">
+                    {/* Цитата */}
+                    <div className="absolute -top-3 -left-3 text-6xl text-[#800080]/20 font-serif">"</div>
+                    <div className="flex gap-1 mb-3">{Array.from({ length: review.rating }).map((_, j) => <Star key={j} size={16} className="fill-yellow-400 text-yellow-400" />)}</div>
+                    <p className="text-gray-600 mb-4 italic relative z-10">"{review.text}"</p>
+                    <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+                      <div className="w-10 h-10 bg-gradient-to-br from-[#800080] to-[#990099] rounded-full flex items-center justify-center text-white font-bold">
+                        {review.name.charAt(0)}
+                      </div>
+                      <p className="font-bold text-[#800080]">{review.name}</p>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -631,17 +717,49 @@ export default function Landing() {
         </div>
       </section>
 
-      <section id="conditions" className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 scroll-mt-20">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-[#800080] to-[#990099] bg-clip-text text-transparent flex items-center justify-center gap-3">
-            <ClipboardList size={40} className="text-[#800080]" />
-            Условия работы и доставки
+      <section id="conditions" className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 scroll-mt-20 relative overflow-hidden">
+        {/* Декоративные элементы */}
+        <div className="absolute top-10 right-10 w-24 h-24 bg-[#800080]/10 rounded-full blur-2xl"></div>
+        <div className="absolute bottom-10 left-10 w-32 h-32 bg-[#990099]/10 rounded-full blur-2xl"></div>
+        
+        <div className="max-w-7xl mx-auto px-4 relative z-10">
+          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 flex items-center justify-center gap-3">
+            <div className="p-3 bg-gradient-to-br from-[#800080] to-[#990099] rounded-2xl shadow-lg">
+              <ClipboardList size={40} className="text-white" />
+            </div>
+            <span className="bg-gradient-to-r from-[#800080] to-[#990099] bg-clip-text text-transparent">Условия работы и доставки</span>
           </h2>
           <div className="space-y-6">
-            {(settings.workConditionSections || []).map((section) => (
-              <div key={section.id} className={`rounded-2xl shadow-xl p-6 ${section.type === 'warning' ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white' : section.type === 'rules' ? 'bg-white' : 'bg-gradient-to-br from-blue-500 to-purple-600 text-white'}`}>
-                <div className="flex items-center gap-3 mb-4"><span className="text-3xl">{section.icon}</span><h3 className="text-2xl font-bold">{section.title}</h3></div>
-                <div className="space-y-3 text-sm">{section.items.map((item, idx) => (<div key={idx} className={`${section.type === 'rules' ? 'bg-gray-50 border-l-4 border-gray-400' : 'bg-white/10'} rounded-lg p-3`}><p>{item}</p></div>))}</div>
+            {(settings.workConditionSections || []).map((section, index) => (
+              <div key={section.id} className={`relative group rounded-2xl shadow-xl p-6 transition-all duration-300 hover:shadow-2xl ${
+                section.type === 'warning' 
+                  ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white hover:scale-[1.02]' 
+                  : section.type === 'rules' 
+                  ? 'bg-white border-2 border-[#800080]/10 hover:border-[#800080]/30' 
+                  : 'bg-gradient-to-br from-blue-500 to-purple-600 text-white hover:scale-[1.02]'
+              }`}>
+                {/* Номер секции */}
+                <div className={`absolute -top-4 -left-4 w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold shadow-lg ${
+                  section.type === 'warning' ? 'bg-white text-red-500' : section.type === 'rules' ? 'bg-gradient-to-br from-[#800080] to-[#990099] text-white' : 'bg-white text-blue-500'
+                }`}>
+                  {index + 1}
+                </div>
+                
+                <div className="flex items-center gap-3 mb-4 ml-8">
+                  <span className="text-4xl transform group-hover:scale-110 transition-transform duration-300">{section.icon}</span>
+                  <h3 className="text-2xl font-bold">{section.title}</h3>
+                </div>
+                <div className="space-y-3 text-sm ml-8">
+                  {section.items.map((item, idx) => (
+                    <div key={idx} className={`${
+                      section.type === 'rules' 
+                        ? 'bg-gray-50 border-l-4 border-[#800080]/30 hover:border-[#800080] hover:bg-gray-100' 
+                        : 'bg-white/10 hover:bg-white/20'
+                    } rounded-lg p-3 transition-all duration-300`}>
+                      <p>{item}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
@@ -707,7 +825,11 @@ export default function Landing() {
               {/* Дополнительные контактные ссылки */}
               {(settings.contactLinks || []).filter(c => c.isActive).map((contact) => (
                 <div key={contact.id} className="flex items-center gap-4">
-                  <span className="text-3xl">{contact.icon}</span>
+                  {contact.icon ? (
+                    <img src={contact.icon} alt={contact.label} className="w-10 h-10 object-contain" />
+                  ) : (
+                    <div className="w-10 h-10 bg-gray-700 rounded flex items-center justify-center text-gray-400 text-xs">?</div>
+                  )}
                   <div>
                     <p className="text-sm text-gray-400">{contact.label}</p>
                     <a href={contact.link} target={contact.link.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className="text-lg hover:text-[#990099] transition">
