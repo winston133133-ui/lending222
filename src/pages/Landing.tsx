@@ -272,6 +272,7 @@ export default function Landing() {
   const reviews = store.reviews || [];
   const crossProducts = store.crossProducts || [];
   const gallery = store.gallery || [];
+  const contactLinks = store.contactLinks || [];
   const stories = store.stories || [];
   
   const [showOrderForm, setShowOrderForm] = useState(false);
@@ -777,7 +778,7 @@ export default function Landing() {
               <h3 className="text-xl font-bold mb-4 text-[#990099]">Наши контакты</h3>
               
               {/* Все контакты из настроек админки */}
-              {(settings.contactLinks || []).filter(c => c.isActive).map((contact) => (
+              {contactLinks.filter(c => c.isActive).map((contact) => (
                 <div key={contact.id} className="flex items-center gap-4">
                   {contact.icon ? (
                     <img src={contact.icon} alt={contact.label} className="w-10 h-10 object-contain" />
