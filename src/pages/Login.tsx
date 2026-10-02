@@ -38,13 +38,6 @@ export default function Login() {
           </div>
           <button type="submit" className="w-full bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700 shadow-lg shadow-purple-200">Войти</button>
         </form>
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-          <p className="text-xs text-gray-500 font-medium mb-2">Демо-доступ:</p>
-          <div className="space-y-1 text-xs text-gray-600">
-            <p><strong>Админ:</strong> admin@crm.ru / admin</p>
-            <p><strong>Менеджер:</strong> manager@crm.ru / manager</p>
-          </div>
-        </div>
         <p className="text-center mt-6"><a href="/" className="text-purple-600 hover:text-purple-700 text-sm">← Вернуться на сайт</a></p>
       </div>
     </div>
