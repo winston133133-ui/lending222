@@ -75,8 +75,8 @@ function CharacterCard({ character, onOrder }: { character: Character; onOrder: 
             </div>
             {gallery.length > 1 && (
               <>
-                <button onClick={(e) => { e.stopPropagation(); prevImage(); }} className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-purple-700 p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"><ChevronLeft size={20} /></button>
-                <button onClick={(e) => { e.stopPropagation(); nextImage(); }} className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-purple-700 p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"><ChevronRight size={20} /></button>
+                <button onClick={(e) => { e.stopPropagation(); prevImage(); }} className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#800080] p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"><ChevronLeft size={20} /></button>
+                <button onClick={(e) => { e.stopPropagation(); nextImage(); }} className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#800080] p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"><ChevronRight size={20} /></button>
                 <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
                   {gallery.map((_, idx) => (<button key={idx} onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(idx); }} className={`w-2 h-2 rounded-full transition-all ${idx === currentImageIndex ? 'bg-white w-6' : 'bg-white/60'}`} />))}
                 </div>
@@ -95,13 +95,13 @@ function CharacterCard({ character, onOrder }: { character: Character; onOrder: 
               <div key={s.id} className="bg-gray-50 rounded-lg overflow-hidden">
                 <button onClick={() => setExpandedService(expandedService === s.id ? null : s.id)} className="w-full flex justify-between items-center text-sm px-3 py-2 hover:bg-gray-100">
                   <span className="text-gray-700">{s.name}</span>
-                  <span className="font-medium text-purple-600 flex items-center gap-1">{s.duration} мин · {s.price.toLocaleString()} ₽<ChevronRight size={14} className={`transition-transform ${expandedService === s.id ? 'rotate-90' : ''}`} /></span>
+                  <span className="font-medium text-[#800080] flex items-center gap-1">{s.duration} мин · {s.price.toLocaleString()} ₽<ChevronRight size={14} className={`transition-transform ${expandedService === s.id ? 'rotate-90' : ''}`} /></span>
                 </button>
                 {expandedService === s.id && s.description && (
                   <div className="px-3 pb-2 text-xs text-gray-600 border-t border-gray-200 pt-2">
                     {s.description.split('\n').filter(line => line.trim()).map((line, idx) => (
                       <div key={idx} className="flex items-start gap-2 mb-1">
-                        <span className="text-purple-600 font-bold flex-shrink-0">✦</span>
+                        <span className="text-[#800080] font-bold flex-shrink-0">✦</span>
                         <span>{line.trim()}</span>
                       </div>
                     ))}
@@ -111,8 +111,8 @@ function CharacterCard({ character, onOrder }: { character: Character; onOrder: 
             ))}
           </div>
           <div className="flex items-center justify-between">
-            <div><p className="text-xs text-gray-400">от</p><p className="text-2xl font-bold text-purple-600">{(character.services?.length ? Math.min(...character.services.map(s => s.price)) : 0).toLocaleString()} ₽</p></div>
-            <button onClick={onOrder} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center gap-1">Заказать <ChevronRight size={16} /></button>
+            <div><p className="text-xs text-gray-400">от</p><p className="text-2xl font-bold text-[#800080]">{(character.services?.length ? Math.min(...character.services.map(s => s.price)) : 0).toLocaleString()} ₽</p></div>
+            <button onClick={onOrder} className="bg-[#800080] text-white px-4 py-2 rounded-lg hover:bg-[#660066] flex items-center gap-1">Заказать <ChevronRight size={16} /></button>
           </div>
         </div>
       </div>
@@ -267,21 +267,21 @@ export default function Landing() {
       <header className="bg-white shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {settings.logo ? <img src={settings.logo} alt="Логотип" className="h-10 object-contain" /> : (<><Sparkles className="text-purple-600" size={28} /><span className="font-bold text-xl text-purple-900">Ростовые куклы</span></>)}
+            {settings.logo ? <img src={settings.logo} alt="Логотип" className="h-10 object-contain" /> : (<><Sparkles className="text-[#800080]" size={28} /><span className="font-bold text-xl text-[#800080]">Ростовые куклы</span></>)}
           </div>
           <nav className="hidden md:flex items-center gap-6">
-            <button onClick={() => scrollTo('characters')} className="text-gray-600 hover:text-purple-600">Персонажи</button>
-            <button onClick={() => scrollTo('how')} className="text-gray-600 hover:text-purple-600">Как заказать</button>
-            <button onClick={() => scrollTo('payment')} className="text-gray-600 hover:text-purple-600">Оплата</button>
-            <button onClick={() => scrollTo('reviews')} className="text-gray-600 hover:text-purple-600">Отзывы</button>
-            <button onClick={() => scrollTo('conditions')} className="text-gray-600 hover:text-purple-600">Условия</button>
-            <button onClick={() => scrollTo('contacts')} className="text-gray-600 hover:text-purple-600">Контакты</button>
+            <button onClick={() => scrollTo('characters')} className="text-gray-600 hover:text-[#800080]">Персонажи</button>
+            <button onClick={() => scrollTo('how')} className="text-gray-600 hover:text-[#800080]">Как заказать</button>
+            <button onClick={() => scrollTo('payment')} className="text-gray-600 hover:text-[#800080]">Оплата</button>
+            <button onClick={() => scrollTo('reviews')} className="text-gray-600 hover:text-[#800080]">Отзывы</button>
+            <button onClick={() => scrollTo('conditions')} className="text-gray-600 hover:text-[#800080]">Условия</button>
+            <button onClick={() => scrollTo('contacts')} className="text-gray-600 hover:text-[#800080]">Контакты</button>
           </nav>
-          <button onClick={() => setShowOrderForm(true)} className="bg-purple-600 text-white px-5 py-2.5 rounded-full font-medium hover:bg-purple-700 shadow-lg">Заказать</button>
+          <button onClick={() => setShowOrderForm(true)} className="bg-[#800080] text-white px-5 py-2.5 rounded-full font-medium hover:bg-[#660066] shadow-lg">Заказать</button>
         </div>
       </header>
 
-      <section className="relative overflow-hidden bg-gradient-to-br from-purple-600 via-purple-700 to-pink-600 text-white min-h-[650px]">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#800080] via-[#660066] to-[#990099] text-white min-h-[650px]">
         {settings.heroBackgroundImage && (
           <div className="absolute inset-0">
             <img src={settings.heroBackgroundImage} alt="" className="w-full h-full object-cover opacity-20" />
@@ -298,9 +298,9 @@ export default function Landing() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-4xl lg:text-5xl font-bold mb-6">{settings.heroTitle}</h1>
-              <p className="text-lg lg:text-xl text-purple-100 mb-8">{settings.heroSubtitle}</p>
+              <p className="text-lg lg:text-xl text-white/90 mb-8">{settings.heroSubtitle}</p>
               <div className="flex flex-wrap gap-4">
-                <button onClick={() => setShowOrderForm(true)} className="bg-white text-purple-700 px-8 py-4 rounded-full font-bold text-lg hover:bg-purple-50 shadow-xl">Оставить заявку</button>
+                <button onClick={() => setShowOrderForm(true)} className="bg-white text-[#800080] px-8 py-4 rounded-full font-bold text-lg hover:bg-white/90 shadow-xl">Оставить заявку</button>
                 <a href={`tel:${settings.phone}`} className="border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white/10 flex items-center gap-2"><Phone size={20} />{settings.phone}</a>
               </div>
             </div>
@@ -318,23 +318,23 @@ export default function Landing() {
               Истории
             </h2>
             <p className="text-center text-gray-600 mb-12 text-lg">Яркие моменты наших праздников</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
               {stories.filter(s => s.isActive).map((story) => (
-                <div key={story.id} className="group relative aspect-square rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all cursor-pointer" onClick={() => window.open(story.media, '_blank')}>
+                <div key={story.id} className="group relative w-40 h-56 flex-shrink-0 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all cursor-pointer" onClick={() => window.open(story.media, '_blank')}>
                   {story.type === 'video' ? (
                     <video src={story.media} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" muted />
                   ) : (
                     <img src={story.media} alt={story.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
                     <div>
-                      <p className="text-white font-bold text-sm">{story.title}</p>
-                      {story.description && <p className="text-white/80 text-xs mt-1">{story.description}</p>}
+                      <p className="text-white font-bold text-xs">{story.title}</p>
+                      {story.description && <p className="text-white/80 text-xs mt-1 line-clamp-2">{story.description}</p>}
                     </div>
                   </div>
                   {story.type === 'video' && (
-                    <div className="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-full">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    <div className="absolute top-2 right-2 bg-black/50 text-white p-1.5 rounded-full">
+                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                     </div>
                   )}
                 </div>
@@ -357,7 +357,7 @@ export default function Landing() {
 
       <section id="how" className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent">Как заказать?</h2>
+          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-[#800080] via-[#990099] to-orange-600 bg-clip-text text-transparent">Как заказать?</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {(settings.howToOrderSteps || []).map((item) => (
               <div key={item.id} className="relative group">
@@ -432,7 +432,7 @@ export default function Landing() {
 
       {/* Subscription Section */}
       {settings.subscriptionEnabled && (
-        <section className="py-12 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 text-white relative overflow-hidden">
+        <section className="py-12 bg-gradient-to-br from-[#800080] via-[#990099] to-orange-500 text-white relative overflow-hidden">
           <div className="max-w-6xl mx-auto px-4">
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
@@ -440,19 +440,21 @@ export default function Landing() {
                 <p className="text-base text-white/90 mb-6">{settings.subscriptionDescription}</p>
                 <form onSubmit={(e) => { e.preventDefault(); alert('Спасибо за подписку!'); }} className="flex flex-col sm:flex-row gap-3">
                   <input type="email" required placeholder="Ваш email" className="flex-1 px-5 py-3 rounded-full text-gray-800 focus:outline-none focus:ring-4 focus:ring-white/50" />
-                  <button type="submit" className="bg-white text-purple-600 px-6 py-3 rounded-full font-bold hover:bg-purple-50 transition shadow-xl whitespace-nowrap">
+                  <button type="submit" className="bg-white text-[#800080] px-6 py-3 rounded-full font-bold hover:bg-purple-50 transition shadow-xl whitespace-nowrap">
                     Подписаться
                   </button>
                 </form>
                 <p className="text-xs text-white/70 mt-3">Мы не рассылаем спам. Только интересные новости и акции!</p>
               </div>
               <div className="hidden md:block relative">
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rotate-45 rounded-lg shadow-2xl"></div>
-                <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-2xl">
+                <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-16 h-16 bg-gradient-to-br from-[#800080] to-[#990099] rotate-45 rounded-lg shadow-2xl"></div>
+                <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-2xl overflow-visible">
                   {settings.subscriptionImage ? (
-                    <img src={settings.subscriptionImage} alt="Подписка" className="w-full h-48 object-cover rounded-lg mb-4" />
+                    <div className="relative -mt-16 mb-4">
+                      <img src={settings.subscriptionImage} alt="Подписка" className="w-full h-auto max-h-64 object-contain rounded-lg shadow-2xl" />
+                    </div>
                   ) : (
-                    <div className="text-6xl text-center mb-4">🎉</div>
+                    <div className="text-6xl text-center mb-4 -mt-8">🎉</div>
                   )}
                   <div className="text-center">
                     <p className="font-bold text-lg mb-2">Присоединяйтесь!</p>
@@ -474,7 +476,7 @@ export default function Landing() {
                 <div key={review.id} className="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
                   <div className="flex gap-1 mb-3">{Array.from({ length: review.rating }).map((_, j) => <Star key={j} size={16} className="fill-yellow-400 text-yellow-400" />)}</div>
                   <p className="text-gray-600 mb-4 italic">"{review.text}"</p>
-                  <p className="font-bold text-purple-700">{review.name}</p>
+                  <p className="font-bold text-[#800080]">{review.name}</p>
                 </div>
               ))}
             </div>
@@ -484,8 +486,8 @@ export default function Landing() {
 
       <section id="conditions" className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center justify-center gap-3">
-            <ClipboardList size={40} className="text-purple-600" />
+          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-[#800080] to-[#990099] bg-clip-text text-transparent flex items-center justify-center gap-3">
+            <ClipboardList size={40} className="text-[#800080]" />
             Условия работы и доставки
           </h2>
           <div className="space-y-6">
@@ -509,7 +511,7 @@ export default function Landing() {
                   <span className="text-3xl">{contact.icon}</span>
                   <div>
                     <p className="text-sm text-gray-400">{contact.label}</p>
-                    <a href={contact.link} target={contact.link.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className="text-lg hover:text-purple-300 transition">
+                    <a href={contact.link} target={contact.link.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className="text-lg hover:text-[#990099] transition">
                       {contact.value}
                     </a>
                   </div>
@@ -518,11 +520,11 @@ export default function Landing() {
             </div>
             <div className="space-y-6">
               <div className="bg-gray-800 rounded-2xl p-6">
-                <h3 className="font-bold text-lg mb-4 flex items-center gap-2"><MapPin size={20} className="text-purple-400" />Условия доставки</h3>
+                <h3 className="font-bold text-lg mb-4 flex items-center gap-2"><MapPin size={20} className="text-[#800080]" />Условия доставки</h3>
                 <p className="text-gray-300 leading-relaxed">{settings.deliveryConditions}</p>
               </div>
               <div className="bg-gray-800 rounded-2xl p-6">
-                <h3 className="font-bold text-lg mb-4 flex items-center gap-2"><Clock size={20} className="text-purple-400" />Правила работы</h3>
+                <h3 className="font-bold text-lg mb-4 flex items-center gap-2"><Clock size={20} className="text-[#800080]" />Правила работы</h3>
                 <p className="text-gray-300 leading-relaxed">{settings.workRules}</p>
               </div>
             </div>
@@ -535,11 +537,11 @@ export default function Landing() {
           <p className="text-sm mb-4 leading-relaxed">Сайт носит исключительно информационный характер и не является публичной офертой. Подробная информация о стоимости услуг и товаров, их наличии, видах и характеристиках вы можете узнать в нашем отделе продаж.</p>
           <p className="mb-3">© 2024 Ростовые куклы — Саратов</p>
           <div className="flex justify-center gap-4 text-sm flex-wrap">
-            <Link to="/privacy" className="text-purple-400 hover:text-purple-300">Политика конфиденциальности</Link>
+            <Link to="/privacy" className="text-[#800080] hover:text-[#990099]">Политика конфиденциальности</Link>
             <span>·</span>
-            <Link to="/consent" className="text-purple-400 hover:text-purple-300">Согласие на обработку ПД</Link>
+            <Link to="/consent" className="text-[#800080] hover:text-[#990099]">Согласие на обработку ПД</Link>
             <span>·</span>
-            <Link to="/login" className="text-purple-400 hover:text-purple-300">Вход для сотрудников →</Link>
+            <Link to="/login" className="text-[#800080] hover:text-[#990099]">Вход для сотрудников →</Link>
           </div>
         </div>
       </footer>
@@ -552,7 +554,7 @@ export default function Landing() {
             ) : (
               <>
                 <div className="flex items-center justify-between mb-4"><h3 className="text-xl font-bold">Шаг {currentStep} из 4</h3><button onClick={() => { setShowOrderForm(false); setCurrentStep(1); }} className="p-2 hover:bg-gray-100 rounded-lg"><X size={20} /></button></div>
-                <div className="flex gap-1 mb-6">{[1, 2, 3, 4].map((step) => (<div key={step} className={`flex-1 h-1.5 rounded-full ${step <= currentStep ? 'bg-purple-600' : 'bg-gray-200'}`} />))}</div>
+                <div className="flex gap-1 mb-6">{[1, 2, 3, 4].map((step) => (<div key={step} className={`flex-1 h-1.5 rounded-full ${step <= currentStep ? 'bg-[#800080]' : 'bg-gray-200'}`} />))}</div>
                 {currentStep === 1 && (
                   <div className="space-y-4">
                     <h4 className="font-semibold text-lg">Выберите персонажа</h4>
@@ -560,9 +562,9 @@ export default function Landing() {
                       {characters.filter(c => c.isActive).map((c) => (<button key={c.id} type="button" onClick={() => setFormData(p => ({ ...p, characterId: c.id, serviceId: '' }))} className={`p-3 rounded-lg border-2 text-left transition-all ${formData.characterId === c.id ? 'border-purple-600 bg-purple-50 shadow-md' : 'border-gray-200 hover:border-purple-300'}`}><div className="font-medium text-sm">{c.name}</div></button>))}
                     </div>
                     {selectedCharacter && (selectedCharacter.services || []).length > 0 && (
-                      <div><h4 className="font-semibold text-lg mt-4">Выберите услугу</h4><div className="grid gap-2 mt-2">{(selectedCharacter.services || []).map((service) => (<button key={service.id} type="button" onClick={() => setFormData(p => ({ ...p, serviceId: service.id }))} className={`p-3 rounded-lg border-2 text-left transition-all ${formData.serviceId === service.id ? 'border-purple-600 bg-purple-50 shadow-md' : 'border-gray-200 hover:border-purple-300'}`}><div className="flex items-center justify-between"><div className="flex-1"><div className="font-semibold text-sm">{service.name}</div><div className="flex items-center gap-3 text-xs mt-0.5"><span className="text-gray-600 flex items-center gap-1"><Clock size={12} />{service.duration} мин</span><span className="font-bold text-purple-600">{service.price.toLocaleString()} ₽</span></div></div>{formData.serviceId === service.id && <Check size={20} className="text-purple-600" />}</div></button>))}</div></div>
+                      <div><h4 className="font-semibold text-lg mt-4">Выберите услугу</h4><div className="grid gap-2 mt-2">{(selectedCharacter.services || []).map((service) => (<button key={service.id} type="button" onClick={() => setFormData(p => ({ ...p, serviceId: service.id }))} className={`p-3 rounded-lg border-2 text-left transition-all ${formData.serviceId === service.id ? 'border-[#800080] bg-purple-50 shadow-md' : 'border-gray-200 hover:border-[#990099]'}`}><div className="flex items-center justify-between"><div className="flex-1"><div className="font-semibold text-sm">{service.name}</div><div className="flex items-center gap-3 text-xs mt-0.5"><span className="text-gray-600 flex items-center gap-1"><Clock size={12} />{service.duration} мин</span><span className="font-bold text-[#800080]">{service.price.toLocaleString()} ₽</span></div></div>{formData.serviceId === service.id && <Check size={20} className="text-[#800080]" />}</div></button>))}</div></div>
                     )}
-                    <div className="flex gap-3 pt-2"><button type="button" onClick={() => setShowOrderForm(false)} className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">Отмена</button><button type="button" onClick={() => setCurrentStep(2)} disabled={!formData.characterId || !formData.serviceId} className="flex-1 bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">Далее <ArrowRight size={16} /></button></div>
+                    <div className="flex gap-3 pt-2"><button type="button" onClick={() => setShowOrderForm(false)} className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">Отмена</button><button type="button" onClick={() => setCurrentStep(2)} disabled={!formData.characterId || !formData.serviceId} className="flex-1 bg-[#800080] text-white py-3 rounded-lg font-bold hover:bg-[#660066] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">Далее <ArrowRight size={16} /></button></div>
                   </div>
                 )}
                 {currentStep === 2 && (
@@ -573,7 +575,7 @@ export default function Landing() {
                       <div><label className="block text-sm font-medium mb-1">Время *</label>{!formData.date || !selectedService ? (<div className="border border-gray-200 bg-gray-50 rounded-lg px-4 py-2.5 text-gray-400 text-sm">Сначала дату</div>) : availableTimeSlots.length === 0 ? (<div className="border border-red-200 bg-red-50 rounded-lg px-4 py-2.5 text-red-600 text-sm">Нет свободного времени</div>) : (<select required value={formData.time} onChange={(e) => setFormData(p => ({ ...p, time: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-purple-500"><option value="">Время</option>{availableTimeSlots.map((s) => <option key={s} value={s}>{s}</option>)}</select>)}</div>
                     </div>
                     <div><label className="block text-sm font-medium mb-1">Адрес *</label><input required type="text" value={formData.address} onChange={(e) => setFormData(p => ({ ...p, address: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-purple-500" placeholder="Адрес" /></div>
-                    <div className="flex gap-3 pt-2"><button type="button" onClick={() => setCurrentStep(1)} className="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-1"><ArrowLeft size={16} />Назад</button><button type="button" onClick={() => setCurrentStep(3)} disabled={!formData.date || !formData.time || !formData.address} className="flex-1 bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">Далее <ArrowRight size={16} /></button></div>
+                    <div className="flex gap-3 pt-2"><button type="button" onClick={() => setCurrentStep(1)} className="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-1"><ArrowLeft size={16} />Назад</button><button type="button" onClick={() => setCurrentStep(3)} disabled={!formData.date || !formData.time || !formData.address} className="flex-1 bg-[#800080] text-white py-3 rounded-lg font-bold hover:bg-[#660066] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">Далее <ArrowRight size={16} /></button></div>
                   </div>
                 )}
                 {currentStep === 3 && (
@@ -587,18 +589,18 @@ export default function Landing() {
                           <div key={cp.id} className={`p-3 rounded-lg border-2 transition-all ${quantity > 0 ? 'border-purple-600 bg-purple-50' : 'border-gray-200 hover:border-purple-300'}`}>
                             <div className="flex items-center gap-3">
                               {cp.image ? (<img src={cp.image} alt={cp.name} className="w-16 h-16 object-cover rounded-lg flex-shrink-0" />) : (<div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0"><ShoppingCart size={24} className="text-gray-400" /></div>)}
-                              <div className="flex-1 min-w-0"><div className="font-medium text-sm">{cp.name}</div>{cp.description && <div className="text-xs text-gray-500 mt-0.5 line-clamp-1">{cp.description}</div>}<div className="font-bold text-purple-600 text-sm mt-1">{cp.price.toLocaleString()} ₽</div></div>
-                              {quantity > 0 ? (<div className="flex items-center gap-2 flex-shrink-0"><button type="button" onClick={() => setSelectedCrossProducts(p => quantity <= 1 ? p.filter(s => s.productId !== cp.id) : p.map(s => s.productId === cp.id ? { ...s, quantity: s.quantity - 1 } : s))} className="w-8 h-8 rounded-lg bg-white border border-gray-300 hover:bg-gray-100 flex items-center justify-center font-bold">−</button><span className="w-8 text-center font-semibold">{quantity}</span><button type="button" onClick={() => setSelectedCrossProducts(p => p.some(s => s.productId === cp.id) ? p.map(s => s.productId === cp.id ? { ...s, quantity: s.quantity + 1 } : s) : [...p, { productId: cp.id, quantity: 1 }])} className="w-8 h-8 rounded-lg bg-white border border-gray-300 hover:bg-gray-100 flex items-center justify-center font-bold">+</button></div>) : (<button type="button" onClick={() => setSelectedCrossProducts(p => [...p, { productId: cp.id, quantity: 1 }])} className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition flex-shrink-0">+ Добавить</button>)}
+                              <div className="flex-1 min-w-0"><div className="font-medium text-sm">{cp.name}</div>{cp.description && <div className="text-xs text-gray-500 mt-0.5 line-clamp-1">{cp.description}</div>}<div className="font-bold text-[#800080] text-sm mt-1">{cp.price.toLocaleString()} ₽</div></div>
+                              {quantity > 0 ? (<div className="flex items-center gap-2 flex-shrink-0"><button type="button" onClick={() => setSelectedCrossProducts(p => quantity <= 1 ? p.filter(s => s.productId !== cp.id) : p.map(s => s.productId === cp.id ? { ...s, quantity: s.quantity - 1 } : s))} className="w-8 h-8 rounded-lg bg-white border border-gray-300 hover:bg-gray-100 flex items-center justify-center font-bold">−</button><span className="w-8 text-center font-semibold">{quantity}</span><button type="button" onClick={() => setSelectedCrossProducts(p => p.some(s => s.productId === cp.id) ? p.map(s => s.productId === cp.id ? { ...s, quantity: s.quantity + 1 } : s) : [...p, { productId: cp.id, quantity: 1 }])} className="w-8 h-8 rounded-lg bg-white border border-gray-300 hover:bg-gray-100 flex items-center justify-center font-bold">+</button></div>) : (<button type="button" onClick={() => setSelectedCrossProducts(p => [...p, { productId: cp.id, quantity: 1 }])} className="px-4 py-2 bg-[#800080] hover:bg-[#660066] text-white rounded-lg text-sm font-medium transition flex-shrink-0">+ Добавить</button>)}
                             </div>
-                            {quantity > 0 && (<div className="text-right mt-2 pt-2 border-t border-purple-200"><span className="text-sm font-semibold text-purple-700">{(cp.price * quantity).toLocaleString()} ₽</span></div>)}
+                            {quantity > 0 && (<div className="text-right mt-2 pt-2 border-t border-[#800080]/20"><span className="text-sm font-semibold text-[#800080]">{(cp.price * quantity).toLocaleString()} ₽</span></div>)}
                           </div>
                         );
                       })}</div>
                     )}
                     <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
-                      <div className="flex justify-between items-center"><span className="text-sm text-gray-700">Итого:</span><span className="font-bold text-purple-700 text-lg">{((selectedService?.price || 0) + selectedCrossProducts.reduce((sum, cp) => sum + ((crossProducts.find(c => c.id === cp.productId)?.price || 0) * cp.quantity), 0)).toLocaleString()} ₽</span></div>
+                      <div className="flex justify-between items-center"><span className="text-sm text-gray-700">Итого:</span><span className="font-bold text-[#800080] text-lg">{((selectedService?.price || 0) + selectedCrossProducts.reduce((sum, cp) => sum + ((crossProducts.find(c => c.id === cp.productId)?.price || 0) * cp.quantity), 0)).toLocaleString()} ₽</span></div>
                     </div>
-                    <div className="flex gap-3 pt-2"><button type="button" onClick={() => setCurrentStep(2)} className="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-1"><ArrowLeft size={16} />Назад</button><button type="button" onClick={() => setCurrentStep(4)} className="flex-1 bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700 flex items-center justify-center gap-2">Далее <ArrowRight size={16} /></button></div>
+                    <div className="flex gap-3 pt-2"><button type="button" onClick={() => setCurrentStep(2)} className="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-1"><ArrowLeft size={16} />Назад</button><button type="button" onClick={() => setCurrentStep(4)} className="flex-1 bg-[#800080] text-white py-3 rounded-lg font-bold hover:bg-[#660066] flex items-center justify-center gap-2">Далее <ArrowRight size={16} /></button></div>
                   </div>
                 )}
                 {currentStep === 4 && (
@@ -614,19 +616,19 @@ export default function Landing() {
                           const product = crossProducts.find(c => c.id === cp.productId);
                           return product ? <div key={cp.productId} className="flex justify-between"><span className="text-gray-600">+ {product.name} × {cp.quantity}</span><span className="font-medium">{(product.price * cp.quantity).toLocaleString()} ₽</span></div> : null;
                         })}
-                        <div className="border-t border-gray-300 pt-1 mt-1 flex justify-between"><span className="font-bold">Итого:</span><span className="font-bold text-purple-700">{((selectedService?.price || 0) + selectedCrossProducts.reduce((sum, cp) => sum + ((crossProducts.find(c => c.id === cp.productId)?.price || 0) * cp.quantity), 0)).toLocaleString()} ₽</span></div>
+                        <div className="border-t border-gray-300 pt-1 mt-1 flex justify-between"><span className="font-bold">Итого:</span><span className="font-bold text-[#800080]">{((selectedService?.price || 0) + selectedCrossProducts.reduce((sum, cp) => sum + ((crossProducts.find(c => c.id === cp.productId)?.price || 0) * cp.quantity), 0)).toLocaleString()} ₽</span></div>
                       </div>
                     </div>
                     <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
                       <label className="flex items-start gap-2 cursor-pointer">
-                        <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 w-4 h-4 text-purple-600 rounded focus:ring-purple-500" />
-                        <span className="text-xs text-gray-600">Я согласен на <Link to="/privacy" target="_blank" className="text-purple-600 underline">обработку персональных данных</Link></span>
+                        <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 w-4 h-4 text-[#800080] rounded focus:ring-[#800080]" />
+                        <span className="text-xs text-gray-600">Я согласен на <Link to="/privacy" target="_blank" className="text-[#800080] underline">обработку персональных данных</Link></span>
                       </label>
                     </div>
                     <form onSubmit={handleSubmit}>
                       <div className="flex gap-3 pt-2">
                         <button type="button" onClick={() => setCurrentStep(3)} className="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-1"><ArrowLeft size={16} />Назад</button>
-                        <button type="submit" disabled={!consent || !formData.name || !formData.phone} className="flex-1 bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed">Отправить заявку</button>
+                        <button type="submit" disabled={!consent || !formData.name || !formData.phone} className="flex-1 bg-[#800080] text-white py-3 rounded-lg font-bold hover:bg-[#660066] transition disabled:opacity-50 disabled:cursor-not-allowed">Отправить заявку</button>
                       </div>
                     </form>
                   </div>
