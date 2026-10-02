@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import type { Character, CharacterService, WorkConditionSection, HowToOrderStep, PaymentMethod, ContactLink, Story, WorkSchedule } from '../types';
 import { Save, Plus, Trash2, Edit2, X, Phone, MessageCircle, Send, MapPin, FileText, Users, Shield, Sparkles, Upload, Globe, Star, Truck, Image as ImageIcon, MessageSquare, Clock, Bell, Mail } from 'lucide-react';
 
-type Tab = 'characters' | 'contacts' | 'texts' | 'conditions' | 'howtoorder' | 'payment' | 'gallery' | 'crossproducts' | 'notifications' | 'seo' | 'reviews' | 'users' | 'contactlinks' | 'stories' | 'schedule' | 'subscription';
+type Tab = 'characters' | 'contacts' | 'texts' | 'conditions' | 'howtoorder' | 'gallery' | 'crossproducts' | 'notifications' | 'seo' | 'reviews' | 'users' | 'stories' | 'schedule' | 'subscription';
 
 export default function Settings() {
   const { currentUser } = useStore();
@@ -17,14 +17,12 @@ export default function Settings() {
 
   const tabs = [
     { id: 'characters' as Tab, label: 'Персонажи', icon: Users },
-    { id: 'contacts' as Tab, label: 'Контакты', icon: Phone },
+    { id: 'contacts' as Tab, label: '📞 Контакты', icon: Phone },
     { id: 'texts' as Tab, label: 'Тексты', icon: FileText },
-    { id: 'conditions' as Tab, label: '📋 Условия', icon: FileText },
+    { id: 'conditions' as Tab, label: '📋 Условия и оплата', icon: FileText },
     { id: 'howtoorder' as Tab, label: 'Как заказать', icon: Sparkles },
-    { id: 'payment' as Tab, label: '💳 Оплата', icon: FileText },
-    { id: 'gallery' as Tab, label: 'Галерея', icon: ImageIcon },
+    { id: 'gallery' as Tab, label: '🖼️ Галерея', icon: ImageIcon },
     { id: 'crossproducts' as Tab, label: 'Кросс-товары', icon: Sparkles },
-    { id: 'contactlinks' as Tab, label: '🔗 Ссылки', icon: Send },
     { id: 'stories' as Tab, label: '📸 Истории', icon: ImageIcon },
     { id: 'schedule' as Tab, label: '🕐 Режим работы', icon: Clock },
     { id: 'subscription' as Tab, label: '📧 Подписка', icon: Mail },
@@ -47,12 +45,10 @@ export default function Settings() {
       {activeTab === 'characters' && <CharactersTab />}
       {activeTab === 'contacts' && <ContactsTab />}
       {activeTab === 'texts' && <TextsTab />}
-      {activeTab === 'conditions' && <ConditionsTab />}
+      {activeTab === 'conditions' && <ConditionsAndPaymentTab />}
       {activeTab === 'howtoorder' && <HowToOrderTab />}
-      {activeTab === 'payment' && <PaymentMethodsTab />}
       {activeTab === 'gallery' && <GalleryTab />}
       {activeTab === 'crossproducts' && <CrossProductsTab />}
-      {activeTab === 'contactlinks' && <ContactLinksTab />}
       {activeTab === 'stories' && <StoriesTab />}
       {activeTab === 'schedule' && <ScheduleTab />}
       {activeTab === 'subscription' && <SubscriptionTab />}
@@ -167,56 +163,7 @@ function CharactersTab() {
   );
 }
 
-function ContactLinksTab() {
-  const { contactLinks = [], addContactLink, updateContactLink, deleteContactLink } = useStore();
-  const [showForm, setShowForm] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState<{ type: 'phone' | 'whatsapp' | 'telegram' | 'max' | 'email' | 'address', icon: string, label: string, value: string, link: string, isActive: boolean }>({ type: 'phone', icon: '📞', label: '', value: '', link: '', isActive: true });
 
-  const handleSave = () => {
-    if (editingId) updateContactLink(editingId, form);
-    else addContactLink({ id: Date.now().toString(), ...form });
-    setForm({ type: 'phone', icon: '📞', label: '', value: '', link: '', isActive: true });
-    setShowForm(false); setEditingId(null);
-  };
-
-  return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div><h2 className="text-lg font-bold">Контактные ссылки</h2><p className="text-sm text-gray-500 mt-1">Управление контактами на лендинге</p></div>
-        <button onClick={() => { setForm({ type: 'phone', icon: '📞', label: '', value: '', link: '', isActive: true }); setShowForm(true); setEditingId(null); }} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center gap-1 text-sm"><Plus size={16} />Добавить</button>
-      </div>
-      {showForm && (
-        <div className="mb-6 p-4 bg-purple-50 rounded-lg border border-purple-100 space-y-3">
-          <h3 className="font-medium">{editingId ? 'Редактирование' : 'Новая ссылка'}</h3>
-          <div className="grid md:grid-cols-2 gap-3">
-            <div><label className="block text-sm font-medium mb-1">Тип</label><select value={form.type} onChange={(e) => setForm(p => ({ ...p, type: e.target.value as any }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"><option value="phone">📞 Телефон</option><option value="whatsapp">💬 WhatsApp</option><option value="telegram">✈️ Telegram</option><option value="max">💭 Макс</option><option value="email">📧 Email</option><option value="address">📍 Адрес</option></select></div>
-            <div><label className="block text-sm font-medium mb-1">Иконка (эмодзи)</label><input type="text" value={form.icon} onChange={(e) => setForm(p => ({ ...p, icon: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="📞" /></div>
-            <div><label className="block text-sm font-medium mb-1">Название</label><input type="text" value={form.label} onChange={(e) => setForm(p => ({ ...p, label: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Телефон" /></div>
-            <div><label className="block text-sm font-medium mb-1">Значение</label><input type="text" value={form.value} onChange={(e) => setForm(p => ({ ...p, value: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="+7 (999) 123-45-67" /></div>
-            <div className="md:col-span-2"><label className="block text-sm font-medium mb-1">Ссылка</label><input type="text" value={form.link} onChange={(e) => setForm(p => ({ ...p, link: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="tel:+79991234567 или https://..." /></div>
-          </div>
-          <div className="flex items-center gap-2"><input type="checkbox" checked={form.isActive} onChange={(e) => setForm(p => ({ ...p, isActive: e.target.checked }))} className="w-4 h-4 text-purple-600 rounded" /><label className="text-sm font-medium">Активна</label></div>
-          <div className="flex gap-2"><button onClick={handleSave} disabled={!form.label || !form.value} className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700 disabled:opacity-50 flex items-center gap-1"><Save size={14} />{editingId ? 'Обновить' : 'Создать'}</button><button onClick={() => { setShowForm(false); setEditingId(null); }} className="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">Отмена</button></div>
-        </div>
-      )}
-      <div className="space-y-3">
-        {(contactLinks || []).map((link) => (
-          <div key={link.id} className={`flex items-center justify-between p-4 border rounded-lg ${link.isActive ? 'border-gray-200' : 'border-gray-100 opacity-60'}`}>
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">{link.icon}</span>
-              <div><p className="font-medium">{link.label}</p><p className="text-sm text-gray-500">{link.value}</p><p className="text-xs text-gray-400 mt-1">{link.link}</p></div>
-            </div>
-            <div className="flex items-center gap-1">
-              <button onClick={() => { setForm({ type: link.type, icon: link.icon, label: link.label, value: link.value, link: link.link, isActive: link.isActive }); setEditingId(link.id); setShowForm(true); }} className="p-2 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg"><Edit2 size={16} /></button>
-              <button onClick={() => { if (confirm('Удалить ссылку?')) deleteContactLink(link.id); }} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 size={16} /></button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 function StoriesTab() {
   const { stories = [], addStory, updateStory, deleteStory } = useStore();
@@ -351,20 +298,84 @@ function SubscriptionTab() {
 }
 
 function ContactsTab() {
-  const { settings, updateSettings } = useStore();
+  const { settings, updateSettings, contactLinks = [], addContactLink, updateContactLink, deleteContactLink } = useStore();
   const [form, setForm] = useState(settings);
   const [saved, setSaved] = useState(false);
-  const handleSave = () => { updateSettings(form); setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  const [showLinkForm, setShowLinkForm] = useState(false);
+  const [editingLinkId, setEditingLinkId] = useState<string | null>(null);
+  const [linkForm, setLinkForm] = useState<{ type: 'phone' | 'whatsapp' | 'telegram' | 'max' | 'email' | 'address', icon: string, label: string, value: string, link: string, isActive: boolean }>({ type: 'phone', icon: '📞', label: '', value: '', link: '', isActive: true });
+
+  const handleSave = () => { 
+    updateSettings(form); 
+    setSaved(true); 
+    setTimeout(() => setSaved(false), 2000); 
+  };
+
+  const handleSaveLink = () => {
+    if (editingLinkId) {
+      updateContactLink(editingLinkId, linkForm);
+    } else {
+      addContactLink({ id: Date.now().toString(), ...linkForm });
+    }
+    setLinkForm({ type: 'phone', icon: '📞', label: '', value: '', link: '', isActive: true });
+    setShowLinkForm(false);
+    setEditingLinkId(null);
+  };
+
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-      <h2 className="text-lg font-bold mb-6">Контактные данные</h2>
-      <div className="space-y-4 max-w-xl">
-        <div><label className="block text-sm font-medium mb-1 flex items-center gap-2"><Phone size={14} />Телефон</label><input type="text" value={form.phone} onChange={(e) => setForm(p => ({ ...p, phone: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" /></div>
-        <div><label className="block text-sm font-medium mb-1 flex items-center gap-2"><MessageCircle size={14} />WhatsApp</label><input type="text" value={form.whatsapp} onChange={(e) => setForm(p => ({ ...p, whatsapp: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" /></div>
-        <div><label className="block text-sm font-medium mb-1 flex items-center gap-2"><Send size={14} />Telegram</label><input type="text" value={form.telegram} onChange={(e) => setForm(p => ({ ...p, telegram: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" /></div>
-        <div><label className="block text-sm font-medium mb-1 flex items-center gap-2"><MessageSquare size={14} />Макс (мессенджер)</label><input type="text" value={form.maxMessenger} onChange={(e) => setForm(p => ({ ...p, maxMessenger: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="@username" /></div>
-        <div><label className="block text-sm font-medium mb-1 flex items-center gap-2"><MapPin size={14} />Адрес</label><input type="text" value={form.address} onChange={(e) => setForm(p => ({ ...p, address: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" /></div>
-        <button onClick={handleSave} className="bg-purple-600 text-white px-6 py-2.5 rounded-lg hover:bg-purple-700 flex items-center gap-2"><Save size={16} />{saved ? 'Сохранено ✓' : 'Сохранить'}</button>
+    <div className="space-y-6">
+      {/* Основные контакты */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h2 className="text-lg font-bold mb-6">Основные контакты</h2>
+        <div className="space-y-4 max-w-xl">
+          <div><label className="block text-sm font-medium mb-1 flex items-center gap-2"><Phone size={14} />Телефон</label><input type="text" value={form.phone} onChange={(e) => setForm(p => ({ ...p, phone: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" /></div>
+          <div><label className="block text-sm font-medium mb-1 flex items-center gap-2"><MessageCircle size={14} />WhatsApp</label><input type="text" value={form.whatsapp} onChange={(e) => setForm(p => ({ ...p, whatsapp: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" /></div>
+          <div><label className="block text-sm font-medium mb-1 flex items-center gap-2"><Send size={14} />Telegram</label><input type="text" value={form.telegram} onChange={(e) => setForm(p => ({ ...p, telegram: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" /></div>
+          <div><label className="block text-sm font-medium mb-1 flex items-center gap-2"><MessageSquare size={14} />Макс (мессенджер)</label><input type="text" value={form.maxMessenger} onChange={(e) => setForm(p => ({ ...p, maxMessenger: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="@username" /></div>
+          <div><label className="block text-sm font-medium mb-1 flex items-center gap-2"><MapPin size={14} />Адрес</label><input type="text" value={form.address} onChange={(e) => setForm(p => ({ ...p, address: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" /></div>
+          <button onClick={handleSave} className="bg-purple-600 text-white px-6 py-2.5 rounded-lg hover:bg-purple-700 flex items-center gap-2"><Save size={16} />{saved ? 'Сохранено ✓' : 'Сохранить'}</button>
+        </div>
+      </div>
+
+      {/* Контактные ссылки */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-lg font-bold">Контактные ссылки</h2>
+            <p className="text-sm text-gray-500 mt-1">Управление контактами на лендинге</p>
+          </div>
+          <button onClick={() => { setLinkForm({ type: 'phone', icon: '📞', label: '', value: '', link: '', isActive: true }); setShowLinkForm(true); setEditingLinkId(null); }} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center gap-1 text-sm"><Plus size={16} />Добавить</button>
+        </div>
+
+        {showLinkForm && (
+          <div className="mb-6 p-4 bg-purple-50 rounded-lg border border-purple-100 space-y-3">
+            <h3 className="font-medium">{editingLinkId ? 'Редактирование' : 'Новая ссылка'}</h3>
+            <div className="grid md:grid-cols-2 gap-3">
+              <div><label className="block text-sm font-medium mb-1">Тип</label><select value={linkForm.type} onChange={(e) => setLinkForm(p => ({ ...p, type: e.target.value as any }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"><option value="phone">📞 Телефон</option><option value="whatsapp">💬 WhatsApp</option><option value="telegram">✈️ Telegram</option><option value="max">💭 Макс</option><option value="email">📧 Email</option><option value="address">📍 Адрес</option></select></div>
+              <div><label className="block text-sm font-medium mb-1">Иконка (эмодзи)</label><input type="text" value={linkForm.icon} onChange={(e) => setLinkForm(p => ({ ...p, icon: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="📞" /></div>
+              <div><label className="block text-sm font-medium mb-1">Название</label><input type="text" value={linkForm.label} onChange={(e) => setLinkForm(p => ({ ...p, label: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Телефон" /></div>
+              <div><label className="block text-sm font-medium mb-1">Значение</label><input type="text" value={linkForm.value} onChange={(e) => setLinkForm(p => ({ ...p, value: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="+7 (999) 123-45-67" /></div>
+              <div className="md:col-span-2"><label className="block text-sm font-medium mb-1">Ссылка</label><input type="text" value={linkForm.link} onChange={(e) => setLinkForm(p => ({ ...p, link: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="tel:+79991234567 или https://..." /></div>
+            </div>
+            <div className="flex items-center gap-2"><input type="checkbox" checked={linkForm.isActive} onChange={(e) => setLinkForm(p => ({ ...p, isActive: e.target.checked }))} className="w-4 h-4 text-purple-600 rounded" /><label className="text-sm font-medium">Активна</label></div>
+            <div className="flex gap-2"><button onClick={handleSaveLink} disabled={!linkForm.label || !linkForm.value} className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700 disabled:opacity-50 flex items-center gap-1"><Save size={14} />{editingLinkId ? 'Обновить' : 'Создать'}</button><button onClick={() => { setShowLinkForm(false); setEditingLinkId(null); }} className="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">Отмена</button></div>
+          </div>
+        )}
+
+        <div className="space-y-3">
+          {(contactLinks || []).map((link) => (
+            <div key={link.id} className={`flex items-center justify-between p-4 border rounded-lg ${link.isActive ? 'border-gray-200' : 'border-gray-100 opacity-60'}`}>
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">{link.icon}</span>
+                <div><p className="font-medium">{link.label}</p><p className="text-sm text-gray-500">{link.value}</p><p className="text-xs text-gray-400 mt-1">{link.link}</p></div>
+              </div>
+              <div className="flex items-center gap-1">
+                <button onClick={() => { setLinkForm({ type: link.type, icon: link.icon, label: link.label, value: link.value, link: link.link, isActive: link.isActive }); setEditingLinkId(link.id); setShowLinkForm(true); }} className="p-2 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg"><Edit2 size={16} /></button>
+                <button onClick={() => { if (confirm('Удалить ссылку?')) deleteContactLink(link.id); }} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 size={16} /></button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -475,17 +486,19 @@ function TextsTab() {
   );
 }
 
-function ConditionsTab() {
+function ConditionsAndPaymentTab() {
   const { settings, updateSettings } = useStore();
   const [sections, setSections] = useState(settings.workConditionSections || []);
+  const [methods, setMethods] = useState<PaymentMethod[]>(settings.paymentMethods || []);
   const [saved, setSaved] = useState(false);
 
   const handleSave = () => {
-    updateSettings({ ...settings, workConditionSections: sections });
+    updateSettings({ ...settings, workConditionSections: sections, paymentMethods: methods });
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
 
+  // Conditions functions
   const addSection = () => {
     setSections([...sections, { id: Date.now().toString(), title: 'Новый раздел', icon: '📝', type: 'info', items: [''] }]);
   };
@@ -517,34 +530,114 @@ function ConditionsTab() {
     setSections(sections.map(s => s.id === sectionId ? { ...s, items: s.items.filter((_, i) => i !== itemIndex) } : s));
   };
 
+  // Payment methods functions
+  const addMethod = () => {
+    setMethods([...methods, { id: Date.now().toString(), title: 'Новый способ оплаты', icon: '💳', subtitle: 'Описание', items: [''], warning: '', color: 'green', isActive: true }]);
+  };
+
+  const updateMethod = (id: string, data: Partial<PaymentMethod>) => {
+    setMethods(methods.map(m => m.id === id ? { ...m, ...data } : m));
+  };
+
+  const deleteMethod = (id: string) => {
+    if (confirm('Удалить этот способ оплаты?')) setMethods(methods.filter(m => m.id !== id));
+  };
+
+  const addMethodItem = (methodId: string) => {
+    setMethods(methods.map(m => m.id === methodId ? { ...m, items: [...m.items, ''] } : m));
+  };
+
+  const updateMethodItem = (methodId: string, itemIndex: number, value: string) => {
+    setMethods(methods.map(m => {
+      if (m.id === methodId) {
+        const newItems = [...m.items];
+        newItems[itemIndex] = value;
+        return { ...m, items: newItems };
+      }
+      return m;
+    }));
+  };
+
+  const deleteMethodItem = (methodId: string, itemIndex: number) => {
+    setMethods(methods.map(m => m.id === methodId ? { ...m, items: m.items.filter((_, i) => i !== itemIndex) } : m));
+  };
+
+  const colorOptions = [
+    { value: 'green', label: '🟢 Зелёный' },
+    { value: 'blue', label: '🔵 Синий' },
+    { value: 'purple', label: '🟣 Фиолетовый' },
+    { value: 'orange', label: '🟠 Оранжевый' }
+  ];
+
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div><h2 className="text-lg font-bold flex items-center gap-2"><span className="text-xl">📋</span>Условия работы и доставки</h2><p className="text-sm text-gray-500 mt-1">Структурированное редактирование условий</p></div>
-        <button onClick={addSection} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center gap-1 text-sm"><Plus size={16} />Добавить раздел</button>
-      </div>
-      <div className="space-y-6 max-w-4xl">
-        {sections.map((section) => (
-          <div key={section.id} className={`border-2 rounded-lg p-4 ${section.type === 'warning' ? 'border-red-300 bg-red-50' : section.type === 'rules' ? 'border-green-300 bg-green-50' : 'border-blue-300 bg-blue-50'}`}>
-            <div className="flex items-start gap-3 mb-4">
-              <div className="flex-1 space-y-3">
-                <div className="flex gap-2">
-                  <input type="text" value={section.icon} onChange={(e) => updateSection(section.id, { icon: e.target.value })} className="w-16 border border-gray-300 rounded px-2 py-1 text-center text-xl" placeholder="📝" />
-                  <input type="text" value={section.title} onChange={(e) => updateSection(section.id, { title: e.target.value })} className="flex-1 border border-gray-300 rounded px-3 py-1 font-semibold" placeholder="Название раздела" />
+    <div className="space-y-6">
+      {/* Условия работы и доставки */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div><h2 className="text-lg font-bold flex items-center gap-2"><span className="text-xl">📋</span>Условия работы и доставки</h2><p className="text-sm text-gray-500 mt-1">Структурированное редактирование условий</p></div>
+          <button onClick={addSection} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center gap-1 text-sm"><Plus size={16} />Добавить раздел</button>
+        </div>
+        <div className="space-y-6 max-w-4xl">
+          {sections.map((section) => (
+            <div key={section.id} className={`border-2 rounded-lg p-4 ${section.type === 'warning' ? 'border-red-300 bg-red-50' : section.type === 'rules' ? 'border-green-300 bg-green-50' : 'border-blue-300 bg-blue-50'}`}>
+              <div className="flex items-start gap-3 mb-4">
+                <div className="flex-1 space-y-3">
+                  <div className="flex gap-2">
+                    <input type="text" value={section.icon} onChange={(e) => updateSection(section.id, { icon: e.target.value })} className="w-16 border border-gray-300 rounded px-2 py-1 text-center text-xl" placeholder="📝" />
+                    <input type="text" value={section.title} onChange={(e) => updateSection(section.id, { title: e.target.value })} className="flex-1 border border-gray-300 rounded px-3 py-1 font-semibold" placeholder="Название раздела" />
+                  </div>
+                  <div><label className="text-xs text-gray-600 mb-1 block">Тип раздела:</label><select value={section.type} onChange={(e) => updateSection(section.id, { type: e.target.value as any })} className="border border-gray-300 rounded px-2 py-1 text-sm"><option value="info">ℹ️ Информация (синий)</option><option value="warning">⚠️ Предупреждение (красный)</option><option value="rules">📝 Правила (зелёный)</option></select></div>
                 </div>
-                <div><label className="text-xs text-gray-600 mb-1 block">Тип раздела:</label><select value={section.type} onChange={(e) => updateSection(section.id, { type: e.target.value as any })} className="border border-gray-300 rounded px-2 py-1 text-sm"><option value="info">ℹ️ Информация (синий)</option><option value="warning">⚠️ Предупреждение (красный)</option><option value="rules">📝 Правила (зелёный)</option></select></div>
+                <button onClick={() => deleteSection(section.id)} className="text-red-500 hover:text-red-700 p-1"><Trash2 size={18} /></button>
               </div>
-              <button onClick={() => deleteSection(section.id)} className="text-red-500 hover:text-red-700 p-1"><Trash2 size={18} /></button>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Пункты:</label>
+                {section.items.map((item, idx) => (<div key={idx} className="flex gap-2"><input type="text" value={item} onChange={(e) => updateItem(section.id, idx, e.target.value)} className="flex-1 border border-gray-300 rounded px-3 py-1.5 text-sm" placeholder="Текст пункта" /><button onClick={() => deleteItem(section.id, idx)} className="text-red-500 hover:text-red-700 p-1"><X size={16} /></button></div>))}
+                <button onClick={() => addItem(section.id)} className="text-sm text-purple-600 hover:text-purple-700 flex items-center gap-1 mt-2"><Plus size={14} />Добавить пункт</button>
+              </div>
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Пункты:</label>
-              {section.items.map((item, idx) => (<div key={idx} className="flex gap-2"><input type="text" value={item} onChange={(e) => updateItem(section.id, idx, e.target.value)} className="flex-1 border border-gray-300 rounded px-3 py-1.5 text-sm" placeholder="Текст пункта" /><button onClick={() => deleteItem(section.id, idx)} className="text-red-500 hover:text-red-700 p-1"><X size={16} /></button></div>))}
-              <button onClick={() => addItem(section.id)} className="text-sm text-purple-600 hover:text-purple-700 flex items-center gap-1 mt-2"><Plus size={14} />Добавить пункт</button>
+          ))}
+          {sections.length === 0 && <div className="text-center py-12 text-gray-400"><FileText size={48} className="mx-auto mb-3 opacity-50" /><p>Разделы не добавлены</p></div>}
+        </div>
+      </div>
+
+      {/* Способы оплаты */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div><h2 className="text-lg font-bold flex items-center gap-2"><span className="text-xl">💳</span>Способы оплаты</h2><p className="text-sm text-gray-500 mt-1">Управление способами оплаты на сайте</p></div>
+          <button onClick={addMethod} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center gap-1 text-sm"><Plus size={16} />Добавить способ</button>
+        </div>
+        <div className="space-y-6 max-w-4xl">
+          {methods.map((method) => (
+            <div key={method.id} className={`border-2 rounded-lg p-4 ${method.color === 'green' ? 'border-green-300 bg-green-50' : method.color === 'blue' ? 'border-blue-300 bg-blue-50' : method.color === 'purple' ? 'border-purple-300 bg-purple-50' : 'border-orange-300 bg-orange-50'}`}>
+              <div className="flex items-start gap-3 mb-4">
+                <div className="flex-1 space-y-3">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div><label className="text-xs text-gray-600 mb-1 block">Иконка</label><input type="text" value={method.icon} onChange={(e) => updateMethod(method.id, { icon: e.target.value })} className="w-full border border-gray-300 rounded px-2 py-1 text-center text-xl" placeholder="💳" /></div>
+                    <div><label className="text-xs text-gray-600 mb-1 block">Цвет</label><select value={method.color} onChange={(e) => updateMethod(method.id, { color: e.target.value as any })} className="w-full border border-gray-300 rounded px-2 py-1 text-sm">{colorOptions.map(opt => (<option key={opt.value} value={opt.value}>{opt.label}</option>))}</select></div>
+                  </div>
+                  <div><label className="text-xs text-gray-600 mb-1 block">Название</label><input type="text" value={method.title} onChange={(e) => updateMethod(method.id, { title: e.target.value })} className="w-full border border-gray-300 rounded px-3 py-1 font-semibold" placeholder="Название способа оплаты" /></div>
+                  <div><label className="text-xs text-gray-600 mb-1 block">Подзаголовок</label><input type="text" value={method.subtitle} onChange={(e) => updateMethod(method.id, { subtitle: e.target.value })} className="w-full border border-gray-300 rounded px-3 py-1 text-sm" placeholder="Краткое описание" /></div>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={method.isActive} onChange={(e) => updateMethod(method.id, { isActive: e.target.checked })} className="w-4 h-4 text-purple-600 rounded" /><span className="text-sm">Активен</span></label>
+                  <button onClick={() => deleteMethod(method.id)} className="text-red-500 hover:text-red-700 p-1"><Trash2 size={18} /></button>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Пункты:</label>
+                {method.items.map((item, idx) => (<div key={idx} className="flex gap-2"><input type="text" value={item} onChange={(e) => updateMethodItem(method.id, idx, e.target.value)} className="flex-1 border border-gray-300 rounded px-3 py-1.5 text-sm" placeholder="Текст пункта" /><button onClick={() => deleteMethodItem(method.id, idx)} className="text-red-500 hover:text-red-700 p-1"><X size={16} /></button></div>))}
+                <button onClick={() => addMethodItem(method.id)} className="text-sm text-purple-600 hover:text-purple-700 flex items-center gap-1 mt-2"><Plus size={14} />Добавить пункт</button>
+              </div>
+              <div className="mt-4"><label className="text-sm font-medium text-gray-700 mb-1 block">Предупреждение (необязательно):</label><input type="text" value={method.warning || ''} onChange={(e) => updateMethod(method.id, { warning: e.target.value })} className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm" placeholder="⚠️ Важная информация..." /></div>
             </div>
-          </div>
-        ))}
-        {sections.length === 0 && <div className="text-center py-12 text-gray-400"><FileText size={48} className="mx-auto mb-3 opacity-50" /><p>Разделы не добавлены</p></div>}
-        <button onClick={handleSave} className="bg-purple-600 text-white px-6 py-2.5 rounded-lg hover:bg-purple-700 flex items-center gap-2"><Save size={16} />{saved ? 'Сохранено ✓' : 'Сохранить'}</button>
+          ))}
+          {methods.length === 0 && <div className="text-center py-12 text-gray-400"><FileText size={48} className="mx-auto mb-3 opacity-50" /><p>Способы оплаты не добавлены</p></div>}
+        </div>
+      </div>
+
+      <div className="sticky bottom-4 bg-white rounded-xl shadow-lg border border-gray-200 p-4">
+        <button onClick={handleSave} className="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 flex items-center justify-center gap-2 font-medium"><Save size={16} />{saved ? 'Сохранено ✓' : 'Сохранить все изменения'}</button>
       </div>
     </div>
   );
@@ -611,92 +704,7 @@ function HowToOrderTab() {
   );
 }
 
-function PaymentMethodsTab() {
-  const { settings, updateSettings } = useStore();
-  const [methods, setMethods] = useState<PaymentMethod[]>(settings.paymentMethods || []);
-  const [saved, setSaved] = useState(false);
 
-  const handleSave = () => {
-    updateSettings({ ...settings, paymentMethods: methods });
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
-
-  const addMethod = () => {
-    setMethods([...methods, { id: Date.now().toString(), title: 'Новый способ оплаты', icon: '💳', subtitle: 'Описание', items: [''], warning: '', color: 'green', isActive: true }]);
-  };
-
-  const updateMethod = (id: string, data: Partial<PaymentMethod>) => {
-    setMethods(methods.map(m => m.id === id ? { ...m, ...data } : m));
-  };
-
-  const deleteMethod = (id: string) => {
-    if (confirm('Удалить этот способ оплаты?')) setMethods(methods.filter(m => m.id !== id));
-  };
-
-  const addItem = (methodId: string) => {
-    setMethods(methods.map(m => m.id === methodId ? { ...m, items: [...m.items, ''] } : m));
-  };
-
-  const updateItem = (methodId: string, itemIndex: number, value: string) => {
-    setMethods(methods.map(m => {
-      if (m.id === methodId) {
-        const newItems = [...m.items];
-        newItems[itemIndex] = value;
-        return { ...m, items: newItems };
-      }
-      return m;
-    }));
-  };
-
-  const deleteItem = (methodId: string, itemIndex: number) => {
-    setMethods(methods.map(m => m.id === methodId ? { ...m, items: m.items.filter((_, i) => i !== itemIndex) } : m));
-  };
-
-  const colorOptions = [
-    { value: 'green', label: '🟢 Зелёный' },
-    { value: 'blue', label: '🔵 Синий' },
-    { value: 'purple', label: '🟣 Фиолетовый' },
-    { value: 'orange', label: '🟠 Оранжевый' }
-  ];
-
-  return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div><h2 className="text-lg font-bold flex items-center gap-2"><span className="text-xl">💳</span>Способы оплаты</h2><p className="text-sm text-gray-500 mt-1">Управление способами оплаты на сайте</p></div>
-        <button onClick={addMethod} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center gap-1 text-sm"><Plus size={16} />Добавить способ</button>
-      </div>
-      <div className="space-y-6 max-w-4xl">
-        {methods.map((method) => (
-          <div key={method.id} className={`border-2 rounded-lg p-4 ${method.color === 'green' ? 'border-green-300 bg-green-50' : method.color === 'blue' ? 'border-blue-300 bg-blue-50' : method.color === 'purple' ? 'border-purple-300 bg-purple-50' : 'border-orange-300 bg-orange-50'}`}>
-            <div className="flex items-start gap-3 mb-4">
-              <div className="flex-1 space-y-3">
-                <div className="grid grid-cols-2 gap-2">
-                  <div><label className="text-xs text-gray-600 mb-1 block">Иконка</label><input type="text" value={method.icon} onChange={(e) => updateMethod(method.id, { icon: e.target.value })} className="w-full border border-gray-300 rounded px-2 py-1 text-center text-xl" placeholder="💳" /></div>
-                  <div><label className="text-xs text-gray-600 mb-1 block">Цвет</label><select value={method.color} onChange={(e) => updateMethod(method.id, { color: e.target.value as any })} className="w-full border border-gray-300 rounded px-2 py-1 text-sm">{colorOptions.map(opt => (<option key={opt.value} value={opt.value}>{opt.label}</option>))}</select></div>
-                </div>
-                <div><label className="text-xs text-gray-600 mb-1 block">Название</label><input type="text" value={method.title} onChange={(e) => updateMethod(method.id, { title: e.target.value })} className="w-full border border-gray-300 rounded px-3 py-1 font-semibold" placeholder="Название способа оплаты" /></div>
-                <div><label className="text-xs text-gray-600 mb-1 block">Подзаголовок</label><input type="text" value={method.subtitle} onChange={(e) => updateMethod(method.id, { subtitle: e.target.value })} className="w-full border border-gray-300 rounded px-3 py-1 text-sm" placeholder="Краткое описание" /></div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={method.isActive} onChange={(e) => updateMethod(method.id, { isActive: e.target.checked })} className="w-4 h-4 text-purple-600 rounded" /><span className="text-sm">Активен</span></label>
-                <button onClick={() => deleteMethod(method.id)} className="text-red-500 hover:text-red-700 p-1"><Trash2 size={18} /></button>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Пункты:</label>
-              {method.items.map((item, idx) => (<div key={idx} className="flex gap-2"><input type="text" value={item} onChange={(e) => updateItem(method.id, idx, e.target.value)} className="flex-1 border border-gray-300 rounded px-3 py-1.5 text-sm" placeholder="Текст пункта" /><button onClick={() => deleteItem(method.id, idx)} className="text-red-500 hover:text-red-700 p-1"><X size={16} /></button></div>))}
-              <button onClick={() => addItem(method.id)} className="text-sm text-purple-600 hover:text-purple-700 flex items-center gap-1 mt-2"><Plus size={14} />Добавить пункт</button>
-            </div>
-            <div className="mt-4"><label className="text-sm font-medium text-gray-700 mb-1 block">Предупреждение (необязательно):</label><input type="text" value={method.warning || ''} onChange={(e) => updateMethod(method.id, { warning: e.target.value })} className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm" placeholder="⚠️ Важная информация..." /></div>
-          </div>
-        ))}
-        {methods.length === 0 && <div className="text-center py-12 text-gray-400"><FileText size={48} className="mx-auto mb-3 opacity-50" /><p>Способы оплаты не добавлены</p></div>}
-        <button onClick={handleSave} className="bg-purple-600 text-white px-6 py-2.5 rounded-lg hover:bg-purple-700 flex items-center gap-2"><Save size={16} />{saved ? 'Сохранено ✓' : 'Сохранить'}</button>
-      </div>
-    </div>
-  );
-}
 
 function GalleryTab() {
   const { gallery = [], addGalleryItem, updateGalleryItem, deleteGalleryItem } = useStore();

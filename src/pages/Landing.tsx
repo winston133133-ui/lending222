@@ -142,6 +142,7 @@ export default function Landing() {
   const settings = store.settings || ({} as any);
   const reviews = store.reviews || [];
   const crossProducts = store.crossProducts || [];
+  const gallery = store.gallery || [];
   
   const [showOrderForm, setShowOrderForm] = useState(false);
   const [orderSubmitted, setOrderSubmitted] = useState(false);
@@ -350,6 +351,26 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Gallery Section */}
+      {(gallery || []).filter(g => g.isActive).length > 0 && (
+        <section id="gallery" className="py-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 scroll-mt-20">
+          <div className="max-w-7xl mx-auto px-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">🖼️ Галерея</h2>
+            <p className="text-center text-gray-600 mb-12 text-lg">Наши работы и праздники</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {(gallery || []).filter(g => g.isActive).map((item) => (
+                <div key={item.id} className="group relative aspect-square rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all cursor-pointer">
+                  <img src={item.image} alt={item.description} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                    <p className="text-white text-sm font-medium">{item.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       <section id="how" className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent">Как заказать?</h2>
@@ -401,17 +422,31 @@ export default function Landing() {
 
       {/* Subscription Section */}
       {settings.subscriptionEnabled && (
-        <section className="py-20 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 text-white">
-          <div className="max-w-4xl mx-auto px-4 text-center">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">{settings.subscriptionTitle}</h2>
-            <p className="text-lg text-white/90 mb-8">{settings.subscriptionDescription}</p>
-            <form onSubmit={(e) => { e.preventDefault(); alert('Спасибо за подписку!'); }} className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto">
-              <input type="email" required placeholder="Ваш email" className="flex-1 px-6 py-4 rounded-full text-gray-800 focus:outline-none focus:ring-4 focus:ring-white/50" />
-              <button type="submit" className="bg-white text-purple-600 px-8 py-4 rounded-full font-bold hover:bg-purple-50 transition shadow-xl">
-                Подписаться
-              </button>
-            </form>
-            <p className="text-sm text-white/70 mt-4">Мы не рассылаем спам. Только интересные новости и акции!</p>
+        <section className="py-12 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 text-white relative overflow-hidden">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div>
+                <h2 className="text-2xl lg:text-3xl font-bold mb-3">{settings.subscriptionTitle}</h2>
+                <p className="text-base text-white/90 mb-6">{settings.subscriptionDescription}</p>
+                <form onSubmit={(e) => { e.preventDefault(); alert('Спасибо за подписку!'); }} className="flex flex-col sm:flex-row gap-3">
+                  <input type="email" required placeholder="Ваш email" className="flex-1 px-5 py-3 rounded-full text-gray-800 focus:outline-none focus:ring-4 focus:ring-white/50" />
+                  <button type="submit" className="bg-white text-purple-600 px-6 py-3 rounded-full font-bold hover:bg-purple-50 transition shadow-xl whitespace-nowrap">
+                    Подписаться
+                  </button>
+                </form>
+                <p className="text-xs text-white/70 mt-3">Мы не рассылаем спам. Только интересные новости и акции!</p>
+              </div>
+              <div className="hidden md:block relative">
+                <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rotate-45 rounded-lg shadow-2xl"></div>
+                <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-2xl">
+                  <div className="text-6xl text-center mb-4">🎉</div>
+                  <div className="text-center">
+                    <p className="font-bold text-lg mb-2">Присоединяйтесь!</p>
+                    <p className="text-sm text-white/80">Будьте в курсе всех новостей и специальных предложений</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       )}
