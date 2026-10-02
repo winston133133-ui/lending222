@@ -17,18 +17,18 @@ export default function Settings() {
 
   const tabs = [
     { id: 'characters' as Tab, label: 'Персонажи', icon: Users },
-    { id: 'contacts' as Tab, label: '📞 Контакты', icon: Phone },
-    { id: 'texts' as Tab, label: 'Тексты', icon: FileText },
-    { id: 'conditions' as Tab, label: '📋 Условия и оплата', icon: FileText },
-    { id: 'howtoorder' as Tab, label: 'Как заказать', icon: Sparkles },
-    { id: 'gallery' as Tab, label: '🖼️ Галерея', icon: ImageIcon },
     { id: 'crossproducts' as Tab, label: 'Кросс-товары', icon: Sparkles },
-    { id: 'stories' as Tab, label: '📸 Истории', icon: ImageIcon },
-    { id: 'schedule' as Tab, label: '🕐 Режим работы', icon: Clock },
-    { id: 'subscription' as Tab, label: '📧 Подписка', icon: Mail },
+    { id: 'stories' as Tab, label: 'Истории', icon: ImageIcon },
+    { id: 'gallery' as Tab, label: 'Галерея', icon: ImageIcon },
+    { id: 'subscription' as Tab, label: 'Подписка', icon: Mail },
+    { id: 'reviews' as Tab, label: 'Отзывы', icon: Star },
+    { id: 'texts' as Tab, label: 'Тексты', icon: FileText },
+    { id: 'contacts' as Tab, label: 'Контакты', icon: Phone },
+    { id: 'conditions' as Tab, label: 'Условия и оплата', icon: FileText },
+    { id: 'howtoorder' as Tab, label: 'Как заказать', icon: Sparkles },
+    { id: 'schedule' as Tab, label: 'Режим работы', icon: Clock },
     { id: 'notifications' as Tab, label: 'Уведомления', icon: Bell },
     { id: 'seo' as Tab, label: 'SEO', icon: Globe },
-    { id: 'reviews' as Tab, label: 'Отзывы', icon: Star },
     { id: 'users' as Tab, label: 'Пользователи', icon: Shield },
   ];
 
@@ -270,13 +270,31 @@ function ScheduleTab() {
 
 function SubscriptionTab() {
   const { settings, updateSettings } = useStore();
-  const [form, setForm] = useState({ subscriptionEnabled: settings.subscriptionEnabled, subscriptionTitle: settings.subscriptionTitle, subscriptionDescription: settings.subscriptionDescription });
+  const [form, setForm] = useState({ subscriptionEnabled: settings.subscriptionEnabled, subscriptionTitle: settings.subscriptionTitle, subscriptionDescription: settings.subscriptionDescription, subscriptionImage: settings.subscriptionImage || '' });
   const [saved, setSaved] = useState(false);
 
   const handleSave = () => {
     updateSettings(form);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handleImageUpload = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const base64 = ev.target?.result as string;
+          setForm(p => ({ ...p, subscriptionImage: base64 }));
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    input.click();
   };
 
   return (
@@ -289,6 +307,17 @@ function SubscriptionTab() {
           <>
             <div><label className="block text-sm font-medium mb-1">Заголовок</label><input type="text" value={form.subscriptionTitle} onChange={(e) => setForm(p => ({ ...p, subscriptionTitle: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" /></div>
             <div><label className="block text-sm font-medium mb-1">Описание</label><textarea value={form.subscriptionDescription} onChange={(e) => setForm(p => ({ ...p, subscriptionDescription: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" rows={3} /></div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Изображение (справа)</label>
+              <div className="flex items-center gap-3">
+                {form.subscriptionImage && <img src={form.subscriptionImage} alt="" className="w-24 h-24 object-cover rounded-lg border" />}
+                <div className="flex gap-2">
+                  <button onClick={handleImageUpload} className="bg-white border border-gray-300 px-3 py-2 rounded-lg text-sm hover:bg-gray-50 flex items-center gap-1"><Upload size={14} />Загрузить</button>
+                  {form.subscriptionImage && <button onClick={() => setForm(p => ({ ...p, subscriptionImage: '' }))} className="text-red-500 text-sm hover:text-red-600">Удалить</button>}
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">Рекомендуемый размер: 400×400px</p>
+            </div>
           </>
         )}
         <button onClick={handleSave} className="bg-purple-600 text-white px-6 py-2.5 rounded-lg hover:bg-purple-700 flex items-center gap-2"><Save size={16} />{saved ? 'Сохранено ✓' : 'Сохранить'}</button>
@@ -323,29 +352,14 @@ function ContactsTab() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Основные контакты */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h2 className="text-lg font-bold mb-6">Основные контакты</h2>
-        <div className="space-y-4 max-w-xl">
-          <div><label className="block text-sm font-medium mb-1 flex items-center gap-2"><Phone size={14} />Телефон</label><input type="text" value={form.phone} onChange={(e) => setForm(p => ({ ...p, phone: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" /></div>
-          <div><label className="block text-sm font-medium mb-1 flex items-center gap-2"><MessageCircle size={14} />WhatsApp</label><input type="text" value={form.whatsapp} onChange={(e) => setForm(p => ({ ...p, whatsapp: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" /></div>
-          <div><label className="block text-sm font-medium mb-1 flex items-center gap-2"><Send size={14} />Telegram</label><input type="text" value={form.telegram} onChange={(e) => setForm(p => ({ ...p, telegram: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" /></div>
-          <div><label className="block text-sm font-medium mb-1 flex items-center gap-2"><MessageSquare size={14} />Макс (мессенджер)</label><input type="text" value={form.maxMessenger} onChange={(e) => setForm(p => ({ ...p, maxMessenger: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="@username" /></div>
-          <div><label className="block text-sm font-medium mb-1 flex items-center gap-2"><MapPin size={14} />Адрес</label><input type="text" value={form.address} onChange={(e) => setForm(p => ({ ...p, address: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" /></div>
-          <button onClick={handleSave} className="bg-purple-600 text-white px-6 py-2.5 rounded-lg hover:bg-purple-700 flex items-center gap-2"><Save size={16} />{saved ? 'Сохранено ✓' : 'Сохранить'}</button>
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-lg font-bold">Контакты</h2>
+          <p className="text-sm text-gray-500 mt-1">Управление контактными данными на лендинге</p>
         </div>
+        <button onClick={() => { setLinkForm({ type: 'phone', icon: '📞', label: '', value: '', link: '', isActive: true }); setShowLinkForm(true); setEditingLinkId(null); }} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center gap-1 text-sm"><Plus size={16} />Добавить контакт</button>
       </div>
-
-      {/* Контактные ссылки */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-lg font-bold">Контактные ссылки</h2>
-            <p className="text-sm text-gray-500 mt-1">Управление контактами на лендинге</p>
-          </div>
-          <button onClick={() => { setLinkForm({ type: 'phone', icon: '📞', label: '', value: '', link: '', isActive: true }); setShowLinkForm(true); setEditingLinkId(null); }} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center gap-1 text-sm"><Plus size={16} />Добавить</button>
-        </div>
 
         {showLinkForm && (
           <div className="mb-6 p-4 bg-purple-50 rounded-lg border border-purple-100 space-y-3">
@@ -371,12 +385,11 @@ function ContactsTab() {
               </div>
               <div className="flex items-center gap-1">
                 <button onClick={() => { setLinkForm({ type: link.type, icon: link.icon, label: link.label, value: link.value, link: link.link, isActive: link.isActive }); setEditingLinkId(link.id); setShowLinkForm(true); }} className="p-2 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg"><Edit2 size={16} /></button>
-                <button onClick={() => { if (confirm('Удалить ссылку?')) deleteContactLink(link.id); }} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 size={16} /></button>
+                <button onClick={() => { if (confirm('Удалить контакт?')) deleteContactLink(link.id); }} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 size={16} /></button>
               </div>
             </div>
           ))}
         </div>
-      </div>
     </div>
   );
 }

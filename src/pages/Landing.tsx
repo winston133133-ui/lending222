@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../store/useStore';
-import { Phone, Sparkles, X, Clock, Star, ChevronRight, ChevronLeft, MessageSquare, Send, MapPin, Shield, MessageCircle, ShoppingCart, Check, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Phone, Sparkles, X, Clock, Star, ChevronRight, ChevronLeft, MessageSquare, Send, MapPin, Shield, MessageCircle, ShoppingCart, Check, ArrowRight, ArrowLeft, Image as ImageIcon, CreditCard, ClipboardList } from 'lucide-react';
 import type { Character } from '../types';
 
 function HeroImageAnimation({ image }: { image: string }) {
@@ -143,6 +143,7 @@ export default function Landing() {
   const reviews = store.reviews || [];
   const crossProducts = store.crossProducts || [];
   const gallery = store.gallery || [];
+  const stories = store.stories || [];
   
   const [showOrderForm, setShowOrderForm] = useState(false);
   const [orderSubmitted, setOrderSubmitted] = useState(false);
@@ -309,13 +310,16 @@ export default function Landing() {
       </section>
 
       {/* Stories Section */}
-      {(settings.stories || []).filter(s => s.isActive).length > 0 && (
+      {stories.filter(s => s.isActive).length > 0 && (
         <section id="stories" className="py-20 bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 scroll-mt-20">
           <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl lg:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-yellow-600 via-orange-600 to-red-600 bg-clip-text text-transparent">📸 Истории</h2>
+            <h2 className="text-3xl lg:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-yellow-600 via-orange-600 to-red-600 bg-clip-text text-transparent flex items-center justify-center gap-3">
+              <ImageIcon size={40} className="text-yellow-600" />
+              Истории
+            </h2>
             <p className="text-center text-gray-600 mb-12 text-lg">Яркие моменты наших праздников</p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {(settings.stories || []).filter(s => s.isActive).map((story) => (
+              {stories.filter(s => s.isActive).map((story) => (
                 <div key={story.id} className="group relative aspect-square rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all cursor-pointer" onClick={() => window.open(story.media, '_blank')}>
                   {story.type === 'video' ? (
                     <video src={story.media} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" muted />
@@ -351,26 +355,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Gallery Section */}
-      {(gallery || []).filter(g => g.isActive).length > 0 && (
-        <section id="gallery" className="py-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 scroll-mt-20">
-          <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl lg:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">🖼️ Галерея</h2>
-            <p className="text-center text-gray-600 mb-12 text-lg">Наши работы и праздники</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {(gallery || []).filter(g => g.isActive).map((item) => (
-                <div key={item.id} className="group relative aspect-square rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all cursor-pointer">
-                  <img src={item.image} alt={item.description} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                    <p className="text-white text-sm font-medium">{item.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       <section id="how" className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent">Как заказать?</h2>
@@ -391,7 +375,10 @@ export default function Landing() {
 
       <section id="payment" className="py-20 bg-gradient-to-br from-green-50 via-emerald-50 to-blue-50 scroll-mt-20">
         <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-green-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">💳 Способы оплаты</h2>
+          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-green-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent flex items-center justify-center gap-3">
+            <CreditCard size={40} className="text-green-600" />
+            Способы оплаты
+          </h2>
           <div className="grid md:grid-cols-2 gap-6">
             {(settings.paymentMethods || []).filter(m => m.isActive).map((method) => {
               const colorClasses: any = {
@@ -420,6 +407,29 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Gallery Section */}
+      {(gallery || []).filter(g => g.isActive).length > 0 && (
+        <section id="gallery" className="py-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 scroll-mt-20">
+          <div className="max-w-7xl mx-auto px-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center justify-center gap-3">
+              <ImageIcon size={40} className="text-indigo-600" />
+              Галерея
+            </h2>
+            <p className="text-center text-gray-600 mb-12 text-lg">Наши работы и праздники</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {(gallery || []).filter(g => g.isActive).map((item) => (
+                <div key={item.id} className="group relative aspect-square rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all cursor-pointer">
+                  <img src={item.image} alt={item.description} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                    <p className="text-white text-sm font-medium">{item.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Subscription Section */}
       {settings.subscriptionEnabled && (
         <section className="py-12 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 text-white relative overflow-hidden">
@@ -439,7 +449,11 @@ export default function Landing() {
               <div className="hidden md:block relative">
                 <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 rotate-45 rounded-lg shadow-2xl"></div>
                 <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-2xl">
-                  <div className="text-6xl text-center mb-4">🎉</div>
+                  {settings.subscriptionImage ? (
+                    <img src={settings.subscriptionImage} alt="Подписка" className="w-full h-48 object-cover rounded-lg mb-4" />
+                  ) : (
+                    <div className="text-6xl text-center mb-4">🎉</div>
+                  )}
                   <div className="text-center">
                     <p className="font-bold text-lg mb-2">Присоединяйтесь!</p>
                     <p className="text-sm text-white/80">Будьте в курсе всех новостей и специальных предложений</p>
@@ -470,7 +484,10 @@ export default function Landing() {
 
       <section id="conditions" className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">📋 Условия работы и доставки</h2>
+          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center justify-center gap-3">
+            <ClipboardList size={40} className="text-purple-600" />
+            Условия работы и доставки
+          </h2>
           <div className="space-y-6">
             {(settings.workConditionSections || []).map((section) => (
               <div key={section.id} className={`rounded-2xl shadow-xl p-6 ${section.type === 'warning' ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white' : section.type === 'rules' ? 'bg-white' : 'bg-gradient-to-br from-blue-500 to-purple-600 text-white'}`}>

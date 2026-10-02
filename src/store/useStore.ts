@@ -113,6 +113,7 @@ const initialSettings: SiteSettings = {
   subscriptionEnabled: true,
   subscriptionTitle: 'Подпишитесь на обновления',
   subscriptionDescription: 'Получайте новости о специальных предложениях и акциях первыми!',
+  subscriptionImage: '',
 };
 
 const initialUsers: User[] = [

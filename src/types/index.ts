@@ -189,6 +189,7 @@ export interface SiteSettings {
   subscriptionEnabled: boolean;
   subscriptionTitle: string;
   subscriptionDescription: string;
+  subscriptionImage?: string;
 }
 
 export const STATUS_LABELS: Record<OrderStatus, string> = {
