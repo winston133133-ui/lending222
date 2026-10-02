@@ -5,6 +5,12 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^api/(.*)$ api/index.php?path=$1 [QSA,L]
 
+# SPA fallback - перенаправление всех остальных запросов на index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteRule ^(.*)$ /index.html [L]
+
 # Безопасность - запрет доступа к конфигурации
 <Files "config.php">
     Order allow,deny
