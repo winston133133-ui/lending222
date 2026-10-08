@@ -1,6 +1,6 @@
 <?php
 /** Дженерик-рендер вкладки «таблица + форма» (DRY для cross/stories/gallery/reviews) */
-function settings_table(string $tab, array $rows, array $cols, string $uploadField, ?array $editing = null): void {
+function settings_table(string $tab, array $rows, array $cols, ?string $uploadField = null, ?array $editing = null): void {
     require __DIR__ . '/_head.php'; ?>
 <div class="grid lg:grid-cols-3 gap-5 items-start">
   <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm overflow-x-auto"><table class="w-full text-sm">
