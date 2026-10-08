@@ -80,19 +80,84 @@ const initialWorkSchedule: WorkSchedule[] = [
   { id: 'ws7', day: 'Воскресенье', startTime: '10:00', endTime: '21:00', isActive: true },
 ];
 
+const defaultWorkConditionSections: SiteSettings['workConditionSections'] = [
+  {
+    id: 'wc-delivery',
+    title: 'Доставка ростовой куклы',
+    icon: '🚗',
+    type: 'info',
+    items: [
+      'Доставка по г. Саратов и г. Энгельс — бесплатно при заказе от 5000 ₽.',
+      'Выезд за пределы города рассчитывается индивидуально (300 ₽/км от границы города).',
+      'Подача персонажа точно ко времени — при опоздании клиента более чем на 15 минут время мероприятия сокращается.',
+      'Для мероприятий на турбазах и за городом просьба уточнять маршрут заранее.',
+    ],
+  },
+  {
+    id: 'wc-time',
+    title: 'Время работы ростовой куклы',
+    icon: '⏰',
+    type: 'rules',
+    items: [
+      'Работаем ежедневно с 06:00 до 23:00.',
+      'Минимальная длительность выступления — 20 минут.',
+      'Между мероприятиями предусмотрен технологический перерыв 30 минут (подготовка костюма, репетиция).',
+      'Продлить выступление можно на месте, если следующее бронирование позволяет.',
+    ],
+  },
+];
+
+const defaultPaymentMethods: SiteSettings['paymentMethods'] = [
+  {
+    id: 'pm-sber',
+    title: 'Оплата на карту Сбербанк',
+    icon: '💳',
+    subtitle: 'Реквизиты отправляем в мессенджер',
+    color: 'green',
+    isActive: true,
+    items: [
+      'Перевод на карту Сбербанк по номеру телефона.',
+      'Реквизиты карты менеджер отправляет в WhatsApp / Telegram после подтверждения заявки.',
+      'Доступна предоплата 50% — остаток вносится в день мероприятия.',
+    ],
+    warning: 'Заказ считается принятым только после внесения предоплаты и подтверждения менеджером.',
+  },
+  {
+    id: 'pm-invoice',
+    title: 'Безналичный расчёт для юр. лиц',
+    icon: '🏦',
+    subtitle: 'Работаем с организациями и ИП',
+    color: 'blue',
+    isActive: true,
+    items: [
+      'Выставляем счёт с НДС / без НДС, подписываем договор и акт оказанных услуг.',
+      'Заявки для юридических лиц — по email или телефону.',
+      'Отправляйте реквизиты компании на: dmitriirusakov-sar@mail.ru',
+    ],
+    warning: 'Заказ считается принятым только после внесения предоплаты и подтверждения менеджером.',
+  },
+];
+
+const defaultHowToOrderSteps: SiteSettings['howToOrderSteps'] = [
+  { id: 'ho-1', step: '1', icon: '📞', title: 'Оставьте заявку', description: 'Выберите персонажа, услугу и удобное время прямо на сайте — или позвоните нам.', color: 'from-purple-500 to-purple-700' },
+  { id: 'ho-2', step: '2', icon: '🤝', title: 'Подтверждение', description: 'Менеджер свяжется с вами в течение 15 минут, уточнит детали и отправит реквизиты.', color: 'from-pink-500 to-rose-600' },
+  { id: 'ho-3', step: '3', icon: '🎉', title: 'Праздник!', description: 'Внесена предоплата — заказ подтверждён. Персонаж приедет точно ко времени.', color: 'from-orange-500 to-amber-600' },
+];
+
 const initialSettings: SiteSettings = {
   phone: '+7 (8452) 123-456',
   whatsapp: '+7 (927) 123-45-67',
   telegram: '@rostovye_kukly',
   maxMessenger: '@rostovye_kukly',
-  address: 'г. Саратов',
-  deliveryConditions: 'Доставка бесплатно от 5000₽',
-  workRules: 'Минимальное время 20 минут',
+  address: 'г. Саратов и г. Энгельс',
+  booking: { enabled: true, startTime: '06:00', endTime: '23:00', slotInterval: 30, bufferMinutes: 30 },
+  deliveryConditions: 'Доставка по Саратову и Энгельсу бесплатно при заказе от 5000 ₽. За городом — 300 ₽/км.',
+  workRules: 'Работаем ежедневно с 06:00 до 23:00. Минимальная длительность выступления — 20 минут.',
   workAndDeliveryConditions: '',
-  workConditionSections: [],
-  howToOrderSteps: [],
-  paymentInfo: '',
-  paymentMethods: [],
+  workConditionSections: defaultWorkConditionSections,
+  howToOrderSteps: defaultHowToOrderSteps,
+  paymentInfo: 'Оплата на карту Сбербанк или безналичный расчёт для юр. лиц. Заказ считается принятым только после внесения предоплаты и подтверждения менеджером.',
+  paymentMethods: defaultPaymentMethods,
   heroTitle: 'Ростовые куклы в Саратове',
   heroSubtitle: 'Яркие праздники для ваших детей!',
   heroImage: '',
@@ -236,7 +301,22 @@ export const useStore = create<StoreState>()(
     }),
     {
       name: 'crm-party-storage',
-      version: 1,
+      version: 2,
+      migrate: (persistedState: any, version: number) => {
+        // Миграция со старых версий: дожимаем недостающие поля настроек дефолтами
+        const s = persistedState || {};
+        if (version < 2 && s.settings) {
+          s.settings = {
+            ...initialSettings,
+            ...s.settings,
+            booking: s.settings.booking ?? initialSettings.booking,
+            workConditionSections: (s.settings.workConditionSections && s.settings.workConditionSections.length > 0) ? s.settings.workConditionSections : initialSettings.workConditionSections,
+            paymentMethods: (s.settings.paymentMethods && s.settings.paymentMethods.length > 0) ? s.settings.paymentMethods : initialSettings.paymentMethods,
+            howToOrderSteps: (s.settings.howToOrderSteps && s.settings.howToOrderSteps.length > 0) ? s.settings.howToOrderSteps : initialSettings.howToOrderSteps,
+          };
+        }
+        return s;
+      },
     }
   )
 );
