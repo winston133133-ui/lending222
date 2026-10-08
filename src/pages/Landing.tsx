@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { Phone, Sparkles, X, Clock, Star, ChevronRight, ChevronLeft, MessageSquare, Send, MapPin, Shield, MessageCircle, ShoppingCart, Check, ArrowRight, ArrowLeft, Image as ImageIcon, CreditCard, ClipboardList, Users, HelpCircle, MessageCircleIcon } from 'lucide-react';
 import type { Character, Story } from '../types';
+import { getAvailableTimeSlots as libGetAvailableTimeSlots, bookingLimits } from '../lib/slots';
 
 function HeroImageAnimation({ image }: { image: string }) {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -287,26 +288,7 @@ export default function Landing() {
   const selectedService = selectedCharacter?.services.find((s) => s.id === formData.serviceId);
 
   const getAvailableTimeSlots = (date: string, serviceDuration: number = 30): string[] => {
-    const { orders: allOrders = [] } = store;
-    const allSlots: string[] = [];
-    for (let hour = 6; hour < 23; hour++) {
-      for (let minute = 0; minute < 60; minute += 30) {
-        allSlots.push(`${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`);
-      }
-    }
-    const dayOrders = allOrders.filter((o) => o.eventDate === date && o.status !== 'CANCELLED');
-    return allSlots.filter((slot) => {
-      const [sH, sM] = slot.split(':').map(Number);
-      const sStart = sH * 60 + sM;
-      const sEnd = sStart + serviceDuration;
-      for (const order of dayOrders) {
-        const [oH, oM] = order.eventTime.split(':').map(Number);
-        const oStart = oH * 60 + oM;
-        const oEnd = oStart + (order.serviceDuration || 30);
-        if (sStart < oEnd + 30 && sEnd > oStart - 30) return false;
-      }
-      return true;
-    });
+    return libGetAvailableTimeSlots(store.orders || [], store.settings, date, serviceDuration);
   };
 
   const availableTimeSlots = formData.date && selectedService ? getAvailableTimeSlots(formData.date, selectedService.duration) : [];
@@ -335,9 +317,7 @@ export default function Landing() {
     setFormData(p => ({ ...p, phone: formatted }));
   };
 
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-  };
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -401,12 +381,13 @@ export default function Landing() {
             {settings.logo ? <img src={settings.logo} alt="Логотип" className="h-10 object-contain" /> : (<><Sparkles className="text-[#800080]" size={28} /><span className="font-bold text-xl text-[#800080]">Ростовые куклы</span></>)}
           </div>
           <nav className="hidden md:flex items-center gap-6">
-            <button onClick={() => scrollTo('characters')} className="text-gray-600 hover:text-[#800080]">Персонажи</button>
-            <button onClick={() => scrollTo('how')} className="text-gray-600 hover:text-[#800080]">Как заказать</button>
-            <button onClick={() => scrollTo('payment')} className="text-gray-600 hover:text-[#800080]">Оплата</button>
-            <button onClick={() => scrollTo('reviews')} className="text-gray-600 hover:text-[#800080]">Отзывы</button>
-            <button onClick={() => scrollTo('conditions')} className="text-gray-600 hover:text-[#800080]">Условия</button>
-            <button onClick={() => scrollTo('contacts')} className="text-gray-600 hover:text-[#800080]">Контакты</button>
+            <a href="#characters" className="text-gray-600 hover:text-[#800080] transition">Персонажи</a>
+            <a href="#how" className="text-gray-600 hover:text-[#800080] transition">Как заказать</a>
+            <a href="#conditions" className="text-gray-600 hover:text-[#800080] transition">Условия</a>
+            <a href="#payment" className="text-gray-600 hover:text-[#800080] transition">Оплата</a>
+            <a href="#gallery" className="text-gray-600 hover:text-[#800080] transition">Галерея</a>
+            <a href="#reviews" className="text-gray-600 hover:text-[#800080] transition">Отзывы</a>
+            <a href="#contacts" className="text-gray-600 hover:text-[#800080] transition">Контакты</a>
           </nav>
           <button onClick={() => setShowOrderForm(true)} className="bg-[#800080] text-white px-5 py-2.5 rounded-full font-medium hover:bg-[#660066] shadow-lg">Заказать</button>
         </div>
@@ -592,6 +573,87 @@ export default function Landing() {
         </div>
       </section>
 
+      <section id="conditions" className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 scroll-mt-20 relative overflow-hidden">
+        {/* Декоративные элементы */}
+        <div className="absolute top-10 right-10 w-24 h-24 bg-[#800080]/10 rounded-full blur-2xl"></div>
+        <div className="absolute bottom-10 left-10 w-32 h-32 bg-[#990099]/10 rounded-full blur-2xl"></div>
+
+        <div className="max-w-7xl mx-auto px-4 relative z-10">
+          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 flex items-center justify-center gap-3">
+            <div className="p-3 bg-gradient-to-br from-[#800080] to-[#990099] rounded-2xl shadow-lg">
+              <ClipboardList size={40} className="text-white" />
+            </div>
+            <span className="bg-gradient-to-r from-[#800080] to-[#990099] bg-clip-text text-transparent">Условия работы и доставки</span>
+          </h2>
+          {(settings.workConditionSections || []).length === 0 ? (
+            <p className="text-center text-gray-400">Условия уточняются у менеджера</p>
+          ) : ((settings.workConditionSections || []).length <= 2 ? (
+            /* Два основных блока — «Доставка ростовой куклы» и «Время работы ростовой куклы» — в одной секции, в два блока */
+            <div className="grid md:grid-cols-2 gap-8 items-stretch">
+              {(settings.workConditionSections || []).map((section) => (
+                <div key={section.id} className={`relative group rounded-2xl shadow-xl p-6 transition-all duration-300 hover:shadow-2xl ${
+                  section.type === 'warning'
+                    ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white hover:-translate-y-1'
+                    : section.type === 'rules'
+                    ? 'bg-white border-2 border-[#800080]/10 hover:border-[#800080]/30'
+                    : 'bg-gradient-to-br from-blue-500 to-purple-600 text-white hover:-translate-y-1'
+                }`}>
+                  <div className="flex items-center gap-4 mb-6">
+                    <span className={`w-16 h-16 rounded-2xl flex items-center justify-center text-4xl shadow-lg transform group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 ${section.type === 'rules' ? 'bg-[#800080]/10' : 'bg-white/20'}`}>{section.icon}</span>
+                    <h3 className="text-2xl font-bold">{section.title}</h3>
+                  </div>
+                  <div className="space-y-3 text-sm">
+                    {section.items.map((item, idx) => (
+                      <div key={idx} className={`${
+                        section.type === 'rules'
+                          ? 'bg-gray-50 border-l-4 border-[#800080]/30 hover:border-[#800080] hover:bg-gray-100'
+                          : 'bg-white/10 hover:bg-white/20'
+                      } rounded-lg p-3 transition-all duration-300 flex items-start gap-3`}>
+                        <span className={`mt-0.5 w-2 h-2 rounded-full flex-shrink-0 ${section.type === 'rules' ? 'bg-[#800080]' : 'bg-white'}`}></span>
+                        <p>{item}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {(settings.workConditionSections || []).map((section, index) => (
+                <div key={section.id} className={`relative group rounded-2xl shadow-xl p-6 transition-all duration-300 hover:shadow-2xl ${
+                  section.type === 'warning'
+                    ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white hover:scale-[1.02]'
+                    : section.type === 'rules'
+                    ? 'bg-white border-2 border-[#800080]/10 hover:border-[#800080]/30'
+                    : 'bg-gradient-to-br from-blue-500 to-purple-600 text-white hover:scale-[1.02]'
+                }`}>
+                  <div className={`absolute -top-4 -left-4 w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold shadow-lg ${
+                    section.type === 'warning' ? 'bg-white text-red-500' : section.type === 'rules' ? 'bg-gradient-to-br from-[#800080] to-[#990099] text-white' : 'bg-white text-blue-500'
+                  }`}>
+                    {index + 1}
+                  </div>
+                  <div className="flex items-center gap-3 mb-4 ml-8">
+                    <span className="text-4xl transform group-hover:scale-110 transition-transform duration-300">{section.icon}</span>
+                    <h3 className="text-2xl font-bold">{section.title}</h3>
+                  </div>
+                  <div className="space-y-3 text-sm ml-8">
+                    {section.items.map((item, idx) => (
+                      <div key={idx} className={`${
+                        section.type === 'rules'
+                          ? 'bg-gray-50 border-l-4 border-[#800080]/30 hover:border-[#800080] hover:bg-gray-100'
+                          : 'bg-white/10 hover:bg-white/20'
+                      } rounded-lg p-3 transition-all duration-300`}>
+                        <p>{item}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Gallery Section */}
       {(gallery || []).filter(g => g.isActive).length > 0 && (
         <section id="gallery" className="py-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 scroll-mt-20 relative overflow-hidden">
@@ -718,55 +780,6 @@ export default function Landing() {
         </div>
       </section>
 
-      <section id="conditions" className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 scroll-mt-20 relative overflow-hidden">
-        {/* Декоративные элементы */}
-        <div className="absolute top-10 right-10 w-24 h-24 bg-[#800080]/10 rounded-full blur-2xl"></div>
-        <div className="absolute bottom-10 left-10 w-32 h-32 bg-[#990099]/10 rounded-full blur-2xl"></div>
-        
-        <div className="max-w-7xl mx-auto px-4 relative z-10">
-          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 flex items-center justify-center gap-3">
-            <div className="p-3 bg-gradient-to-br from-[#800080] to-[#990099] rounded-2xl shadow-lg">
-              <ClipboardList size={40} className="text-white" />
-            </div>
-            <span className="bg-gradient-to-r from-[#800080] to-[#990099] bg-clip-text text-transparent">Условия работы и доставки</span>
-          </h2>
-          <div className="space-y-6">
-            {(settings.workConditionSections || []).map((section, index) => (
-              <div key={section.id} className={`relative group rounded-2xl shadow-xl p-6 transition-all duration-300 hover:shadow-2xl ${
-                section.type === 'warning' 
-                  ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white hover:scale-[1.02]' 
-                  : section.type === 'rules' 
-                  ? 'bg-white border-2 border-[#800080]/10 hover:border-[#800080]/30' 
-                  : 'bg-gradient-to-br from-blue-500 to-purple-600 text-white hover:scale-[1.02]'
-              }`}>
-                {/* Номер секции */}
-                <div className={`absolute -top-4 -left-4 w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold shadow-lg ${
-                  section.type === 'warning' ? 'bg-white text-red-500' : section.type === 'rules' ? 'bg-gradient-to-br from-[#800080] to-[#990099] text-white' : 'bg-white text-blue-500'
-                }`}>
-                  {index + 1}
-                </div>
-                
-                <div className="flex items-center gap-3 mb-4 ml-8">
-                  <span className="text-4xl transform group-hover:scale-110 transition-transform duration-300">{section.icon}</span>
-                  <h3 className="text-2xl font-bold">{section.title}</h3>
-                </div>
-                <div className="space-y-3 text-sm ml-8">
-                  {section.items.map((item, idx) => (
-                    <div key={idx} className={`${
-                      section.type === 'rules' 
-                        ? 'bg-gray-50 border-l-4 border-[#800080]/30 hover:border-[#800080] hover:bg-gray-100' 
-                        : 'bg-white/10 hover:bg-white/20'
-                    } rounded-lg p-3 transition-all duration-300`}>
-                      <p>{item}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section id="contacts" className="py-20 bg-gray-900 text-white scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12 flex items-center justify-center gap-3">
@@ -849,10 +862,10 @@ export default function Landing() {
                   <div className="space-y-4">
                     <h4 className="font-semibold text-lg">Дата и место</h4>
                     <div className="grid grid-cols-2 gap-4">
-                      <div><label className="block text-sm font-medium mb-1">Дата *</label><input required type="date" value={formData.date} onChange={(e) => setFormData(p => ({ ...p, date: e.target.value, time: '' }))} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-purple-500" /></div>
-                      <div><label className="block text-sm font-medium mb-1">Время *</label>{!formData.date || !selectedService ? (<div className="border border-gray-200 bg-gray-50 rounded-lg px-4 py-2.5 text-gray-400 text-sm">Сначала дату</div>) : availableTimeSlots.length === 0 ? (<div className="border border-red-200 bg-red-50 rounded-lg px-4 py-2.5 text-red-600 text-sm">Нет свободного времени</div>) : (<select required value={formData.time} onChange={(e) => setFormData(p => ({ ...p, time: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-purple-500"><option value="">Время</option>{availableTimeSlots.map((s) => <option key={s} value={s}>{s}</option>)}</select>)}</div>
+                      <div><label className="block text-sm font-medium mb-1">Дата *</label><input required type="date" min={new Date().toISOString().split('T')[0]} value={formData.date} onChange={(e) => setFormData(p => ({ ...p, date: e.target.value, time: '' }))} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-purple-500" /></div>
+                      <div><label className="block text-sm font-medium mb-1">Время * ({bookingLimits(settings).startTime}–{bookingLimits(settings).endTime})</label>{!formData.date || !selectedService ? (<div className="border border-gray-200 bg-gray-50 rounded-lg px-4 py-2.5 text-gray-400 text-sm">Сначала дату</div>) : availableTimeSlots.length === 0 ? (<div className="border border-red-200 bg-red-50 rounded-lg px-4 py-2.5 text-red-600 text-sm">Нет свободного времени</div>) : (<select required value={formData.time} onChange={(e) => setFormData(p => ({ ...p, time: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-purple-500"><option value="">Время</option>{availableTimeSlots.map((s) => <option key={s} value={s}>{s}</option>)}</select>)}</div>
                     </div>
-                    <div><label className="block text-sm font-medium mb-1">Адрес *</label><input required type="text" value={formData.address} onChange={(e) => setFormData(p => ({ ...p, address: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-purple-500" placeholder="Адрес" /></div>
+                    <div><label className="block text-sm font-medium mb-1">Адрес / турбаза / номер беседки *</label><input required type="text" value={formData.address} onChange={(e) => setFormData(p => ({ ...p, address: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-purple-500" placeholder="г. Саратов, ул. Пример, 1 или турбаза «Заря», беседка №5" /></div>
                     <div className="flex gap-3 pt-2"><button type="button" onClick={() => setCurrentStep(1)} className="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-1"><ArrowLeft size={16} />Назад</button><button type="button" onClick={() => setCurrentStep(3)} disabled={!formData.date || !formData.time || !formData.address} className="flex-1 bg-[#800080] text-white py-3 rounded-lg font-bold hover:bg-[#660066] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">Далее <ArrowRight size={16} /></button></div>
                   </div>
                 )}

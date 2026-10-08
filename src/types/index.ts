@@ -156,12 +156,21 @@ export interface WorkSchedule {
   isActive: boolean;
 }
 
+export interface BookingSettings {
+  enabled: boolean; // глобальное ограничение бронирования
+  startTime: string; // '06:00'
+  endTime: string; // '23:00'
+  slotInterval: number; // интервал в минутах
+  bufferMinutes: number; // буфер до/после мероприятия
+}
+
 export interface SiteSettings {
   phone: string;
   whatsapp: string;
   telegram: string;
   maxMessenger: string;
   address: string;
+  booking: BookingSettings;
   deliveryConditions: string;
   workRules: string;
   workAndDeliveryConditions: string;
