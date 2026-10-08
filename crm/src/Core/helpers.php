@@ -11,6 +11,15 @@ function slugify(string $s): string {
 }
 function fmt_date(string $dt): string { return date('d.m.Y H:i', strtotime($dt)); }
 
+/** Клиентский формат телефона: +7 (927) 123-45-67 (для кликабельных tel:-ссылок в админке и на сайте) */
+function phone_pretty(?string $p): string {
+    $d = preg_replace('/\D/', '', (string)$p);
+    if (strlen($d) === 11 && ($d[0] === '7' || $d[0] === '8')) $d = '7' . substr($d, 1);
+    elseif (strlen($d) === 10) $d = '7' . $d;
+    else return (string)$p;
+    return '+'.substr($d,0,1).' ('.substr($d,1,3).') '.substr($d,4,3).'-'.substr($d,7,2).'-'.substr($d,9,2);
+}
+
 /** Значение настройки сайта с дефолтом */
 function setting(string $key, string $default = ''): string {
     $v = DB::row('SELECT value FROM settings WHERE key = ?', [$key])['value'] ?? null;

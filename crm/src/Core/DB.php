@@ -14,6 +14,11 @@ class DB {
         return self::$pdo;
     }
 
+    /**
+     * Инициализация соединения (вызывается один раз на старте приложения в App::run()).
+     * Ленивая: реально PDO создаётся при первом обращении через pdo().
+     */
+    public static function init(): void { self::pdo(); }
 
     // --- Универсальные хелперы доступа к данным (prepared statements, защита от SQL-инъекций) ---
     public static function all(string $sql, array $p = []): array { $s = self::pdo()->prepare($sql); $s->execute($p); return $s->fetchAll(); }
@@ -41,7 +46,7 @@ class DB {
 "CREATE TABLE how_to_order (id INTEGER PRIMARY KEY AUTOINCREMENT, step INTEGER, title TEXT, body TEXT, icon TEXT)",
 "CREATE TABLE stories (id INTEGER PRIMARY KEY AUTOINCREMENT, media_type TEXT DEFAULT 'image', media_url TEXT, caption TEXT, view_seconds INTEGER DEFAULT 10)",
 "CREATE TABLE gallery (id INTEGER PRIMARY KEY AUTOINCREMENT, image_url TEXT, caption TEXT)",
-"CREATE TABLE reviews (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, text TEXT, photo_url TEXT, rating INTEGER DEFAULT 5)",
+"CREATE TABLE reviews (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, text TEXT, photo_url TEXT, rating INTEGER DEFAULT 5, is_published INTEGER DEFAULT 1)",
 "CREATE TABLE subscriptions (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT UNIQUE, created_at TEXT DEFAULT (datetime('now','localtime')))",
 "CREATE TABLE legal_pages (slug TEXT PRIMARY KEY, title TEXT, body TEXT)",
 "CREATE TABLE pending_notifications (id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT, payload TEXT, created_at TEXT DEFAULT (datetime('now','localtime')))",

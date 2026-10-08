@@ -106,13 +106,20 @@ class SiteController
         echo json_encode(['date'=>$date,'duration_min'=>$dur,'slots'=>SlotService::freeSlots($date, $dur)], JSON_UNESCAPED_UNICODE);
     }
 
-    /** POST /subscribe — виджет подписки на Telegram-канал (журнал подписок попадает в CRM) */
+    /** POST /subscribe — виджет подписки на обновления (email; журнал подписок попадает в CRM-вкладку «Подписки») */
     public function subscribe(): void
     {
         header('Content-Type: application/json; charset=utf-8');
-        $tg = trim($_POST['tg'] ?? '');
-        if (!preg_match('/^@?\w{4,32}$/', $tg)) { http_response_code(422); echo json_encode(['ok'=>false,'error'=>'Введите ваш telegram: например @username']); return; }
-        DB::run('INSERT INTO subscriptions (tg_user_id, username, source) VALUES (?,?,?)', [preg_replace('/\D/', '', substr(md5($tg), 0, 12)) ?: '0', ltrim($tg, '@'), 'landing']);
+        // Поддержка JSON-тела (fetch на лендинге) и обычных form-постов
+        $in = $_POST;
+        if (!isset($in['email']) && str_contains($_SERVER['CONTENT_TYPE'] ?? '', 'application/json')) {
+            $in = json_decode(file_get_contents('php://input') ?: '', true) ?: [];
+        }
+        $email = filter_var(trim((string)($in['email'] ?? '')), FILTER_VALIDATE_EMAIL);
+        if (!$email) { http_response_code(422); echo json_encode(['ok'=>false,'error'=>'Введите корректный email']); return; }
+        if (empty($in['pd_consent'])) { http_response_code(422); echo json_encode(['ok'=>false,'error'=>'Требуется согласие на обработку персональных данных']); return; }
+        try { DB::run('INSERT INTO subscriptions (email) VALUES (?)', [$email]); }
+        catch (Throwable $e) { echo json_encode(['ok'=>true]); return; } // дубликат — тоже «успех» для пользователя
         echo json_encode(['ok'=>true]);
     }
 
